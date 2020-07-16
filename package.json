@@ -1,0 +1,36 @@
+{
+  "name": "postaffiliate-merchants-sdk",
+  "version": "1.0.0",
+  "main": "src/postaffiliate.js",
+  "author": "Greennbull",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "yarn build & node build/sample.js",
+    "build": "babel src -s -D -d build",
+    "lint": "eslint '**/*.js'",
+    "lint:fix": "eslint '**/*.js' --fix"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint && yarn build"
+    }
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/polyfill": "^7.8.7",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/register": "^7.5.5",
+    "babel-eslint": "^10.0.3",
+    "dotenv": "^6.2.0",
+    "eslint": "^6.8.0",
+    "husky": "^4.2.3",
+    "mocha": "^6.0.1"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "form-data": "^3.0.0"
+  }
+}
