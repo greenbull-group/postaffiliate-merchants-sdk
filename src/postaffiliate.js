@@ -81,32 +81,47 @@ export default class PostAffiliatePro {
 
   async __parseResult(result) {
     if (result.length > 0) {
-      let rows = result[0].rows;
-      let fields = (result[0].fields) ? result[0].fields : null;
       let returnData = [], returnFields = [], headers = [];
+      if (result[0].rows || result[0].fields) {
+        let rows = result[0].rows;
+        let fields = (result[0].fields) ? result[0].fields : null;
 
-      for (let key in rows) {
-        if (key == 0) headers = rows[0];
-        else {
-          let tmpItem = {};
-
-          for (let keyHeader in headers)
-            tmpItem[headers[keyHeader]] = rows[key][keyHeader];
-
-          returnData.push(tmpItem);
-        }
-      }
-
-      if (fields) {
-        for (let key in fields) {
-          if (key == 0) headers = fields[0];
+        for (let key in rows) {
+          if (key == 0) headers = rows[0];
           else {
             let tmpItem = {};
 
             for (let keyHeader in headers)
-              tmpItem[headers[keyHeader]] = fields[key][keyHeader];
+              tmpItem[headers[keyHeader]] = rows[key][keyHeader];
 
-            returnFields.push(tmpItem);
+            returnData.push(tmpItem);
+          }
+        }
+
+        if (fields) {
+          for (let key in fields) {
+            if (key == 0) headers = fields[0];
+            else {
+              let tmpItem = {};
+
+              for (let keyHeader in headers)
+                tmpItem[headers[keyHeader]] = fields[key][keyHeader];
+
+              returnFields.push(tmpItem);
+            }
+          }
+        }
+      } else {
+        let rows = result[0];
+        for (let key in rows) {
+          if (key == 0) headers = rows[0];
+          else {
+            let tmpItem = {};
+
+            for (let keyHeader in headers)
+              tmpItem[headers[keyHeader]] = rows[key][keyHeader];
+
+            returnData.push(tmpItem);
           }
         }
       }
@@ -134,6 +149,7 @@ export default class PostAffiliatePro {
 
   async command(data) {
     let result = await this.__getAPI(data);
+
     if (result)
       result = this.__parseResult(result);
 
@@ -184,6 +200,21 @@ export default class PostAffiliatePro {
     });
 
     return campaigns.data;
+  }
+
+  async campaignsInfos(filters) {
+    let infos = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_Campaign_CampaignsInfoData",
+        "M": "load",
+        //"filters": [["dateinserted","DP","TM"]]
+        "filters": filters
+      }]
+    });
+
+    return infos.data;
   }
 
   async promo(categoryid, offset, limit) {
