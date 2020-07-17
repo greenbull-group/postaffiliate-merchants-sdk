@@ -322,11 +322,10 @@ var PostAffiliatePro = /*#__PURE__*/function () {
 
               case 2:
                 result = _context6.sent;
-                console.log(result);
                 if (result) result = this.__parseResult(result);
                 return _context6.abrupt("return", result);
 
-              case 6:
+              case 5:
               case "end":
                 return _context6.stop();
             }
@@ -341,9 +340,9 @@ var PostAffiliatePro = /*#__PURE__*/function () {
       return command;
     }()
   }, {
-    key: "campaigns",
+    key: "affiliatesInCampaigns",
     value: function () {
-      var _campaigns = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(offset, limit) {
+      var _affiliatesInCampaigns = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(offset, limit) {
         var campaigns;
         return regeneratorRuntime.wrap(function _callee7$(_context7) {
           while (1) {
@@ -357,17 +356,15 @@ var PostAffiliatePro = /*#__PURE__*/function () {
                     "C": "Pap_Features_Common_AffiliateCampaignsGrid",
                     "M": "getRows",
                     "offset": offset,
-                    "limit": limit,
-                    "columns": [["id"], ["name"], ["description"], ["logourl"], ["banners"], ["longdescriptionexists"], ["commissionsdetails"], ["rstatus"], ["commissionsexist"]]
+                    "limit": limit
                   }]
                 });
 
               case 2:
                 campaigns = _context7.sent;
-                console.log(campaigns);
                 return _context7.abrupt("return", campaigns.data);
 
-              case 5:
+              case 4:
               case "end":
                 return _context7.stop();
             }
@@ -375,11 +372,11 @@ var PostAffiliatePro = /*#__PURE__*/function () {
         }, _callee7, this);
       }));
 
-      function campaigns(_x6, _x7) {
-        return _campaigns.apply(this, arguments);
+      function affiliatesInCampaigns(_x6, _x7) {
+        return _affiliatesInCampaigns.apply(this, arguments);
       }
 
-      return campaigns;
+      return affiliatesInCampaigns;
     }()
   }, {
     key: "affiliates",
