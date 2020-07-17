@@ -155,15 +155,31 @@ export default class PostAffiliatePro {
   }
 
   async affiliates(offset, limit) {
-    let campaigns = await this.command({
+    let affiliates = await this.command({
       "C": "Gpf_Rpc_Server",
       "M": "run",
       "requests": [{
         "C": "Pap_Merchants_User_TopAffiliatesGrid",
         "M": "getRows",
         "offset": offset,
+        "limit": limit
+      }]
+    });
+
+    return affiliates.data;
+  }
+
+  async campaigns(offset, limit) {
+    let campaigns = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_Campaign_CampaignsGrid",
+        "M": "getRows",
+        "offset": offset,
         "limit": limit,
-        //"columns": [["id"], ["name"], ["description"], ["logourl"], ["banners"], ["longdescriptionexists"], ["commissionsdetails"], ["rstatus"], ["commissionsexist"]]
+        "sort_col": "rorder",
+        "sort_asc": true
       }]
     });
 

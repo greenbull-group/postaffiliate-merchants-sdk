@@ -382,7 +382,7 @@ var PostAffiliatePro = /*#__PURE__*/function () {
     key: "affiliates",
     value: function () {
       var _affiliates = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(offset, limit) {
-        var campaigns;
+        var affiliates;
         return regeneratorRuntime.wrap(function _callee8$(_context8) {
           while (1) {
             switch (_context8.prev = _context8.next) {
@@ -395,14 +395,13 @@ var PostAffiliatePro = /*#__PURE__*/function () {
                     "C": "Pap_Merchants_User_TopAffiliatesGrid",
                     "M": "getRows",
                     "offset": offset,
-                    "limit": limit //"columns": [["id"], ["name"], ["description"], ["logourl"], ["banners"], ["longdescriptionexists"], ["commissionsdetails"], ["rstatus"], ["commissionsexist"]]
-
+                    "limit": limit
                   }]
                 });
 
               case 2:
-                campaigns = _context8.sent;
-                return _context8.abrupt("return", campaigns.data);
+                affiliates = _context8.sent;
+                return _context8.abrupt("return", affiliates.data);
 
               case 4:
               case "end":
@@ -419,15 +418,56 @@ var PostAffiliatePro = /*#__PURE__*/function () {
       return affiliates;
     }()
   }, {
-    key: "promo",
+    key: "campaigns",
     value: function () {
-      var _promo = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(categoryid, offset, limit) {
-        var coupons;
+      var _campaigns = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(offset, limit) {
+        var campaigns;
         return regeneratorRuntime.wrap(function _callee9$(_context9) {
           while (1) {
             switch (_context9.prev = _context9.next) {
               case 0:
                 _context9.next = 2;
+                return this.command({
+                  "C": "Gpf_Rpc_Server",
+                  "M": "run",
+                  "requests": [{
+                    "C": "Pap_Merchants_Campaign_CampaignsGrid",
+                    "M": "getRows",
+                    "offset": offset,
+                    "limit": limit,
+                    "sort_col": "rorder",
+                    "sort_asc": true
+                  }]
+                });
+
+              case 2:
+                campaigns = _context9.sent;
+                return _context9.abrupt("return", campaigns.data);
+
+              case 4:
+              case "end":
+                return _context9.stop();
+            }
+          }
+        }, _callee9, this);
+      }));
+
+      function campaigns(_x10, _x11) {
+        return _campaigns.apply(this, arguments);
+      }
+
+      return campaigns;
+    }()
+  }, {
+    key: "promo",
+    value: function () {
+      var _promo = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(categoryid, offset, limit) {
+        var coupons;
+        return regeneratorRuntime.wrap(function _callee10$(_context10) {
+          while (1) {
+            switch (_context10.prev = _context10.next) {
+              case 0:
+                _context10.next = 2;
                 return this.command({
                   "C": "Gpf_Rpc_Server",
                   "M": "run",
@@ -442,18 +482,18 @@ var PostAffiliatePro = /*#__PURE__*/function () {
                 });
 
               case 2:
-                coupons = _context9.sent;
-                return _context9.abrupt("return", coupons.data);
+                coupons = _context10.sent;
+                return _context10.abrupt("return", coupons.data);
 
               case 4:
               case "end":
-                return _context9.stop();
+                return _context10.stop();
             }
           }
-        }, _callee9, this);
+        }, _callee10, this);
       }));
 
-      function promo(_x10, _x11, _x12) {
+      function promo(_x12, _x13, _x14) {
         return _promo.apply(this, arguments);
       }
 
@@ -462,13 +502,13 @@ var PostAffiliatePro = /*#__PURE__*/function () {
   }, {
     key: "report",
     value: function () {
-      var _report = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(datestart, dateend, status) {
+      var _report = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(datestart, dateend, status) {
         var report;
-        return regeneratorRuntime.wrap(function _callee10$(_context10) {
+        return regeneratorRuntime.wrap(function _callee11$(_context11) {
           while (1) {
-            switch (_context10.prev = _context10.next) {
+            switch (_context11.prev = _context11.next) {
               case 0:
-                _context10.next = 2;
+                _context11.next = 2;
                 return this.command({
                   "C": "Gpf_Rpc_Server",
                   "M": "run",
@@ -482,18 +522,18 @@ var PostAffiliatePro = /*#__PURE__*/function () {
                 });
 
               case 2:
-                report = _context10.sent;
-                return _context10.abrupt("return", report.data);
+                report = _context11.sent;
+                return _context11.abrupt("return", report.data);
 
               case 4:
               case "end":
-                return _context10.stop();
+                return _context11.stop();
             }
           }
-        }, _callee10, this);
+        }, _callee11, this);
       }));
 
-      function report(_x13, _x14, _x15) {
+      function report(_x15, _x16, _x17) {
         return _report.apply(this, arguments);
       }
 
@@ -502,13 +542,13 @@ var PostAffiliatePro = /*#__PURE__*/function () {
   }, {
     key: "deeplink",
     value: function () {
-      var _deeplink = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(url, campaignid) {
+      var _deeplink = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12(url, campaignid) {
         var deeplink;
-        return regeneratorRuntime.wrap(function _callee11$(_context11) {
+        return regeneratorRuntime.wrap(function _callee12$(_context12) {
           while (1) {
-            switch (_context11.prev = _context11.next) {
+            switch (_context12.prev = _context12.next) {
               case 0:
-                _context11.next = 2;
+                _context12.next = 2;
                 return this.command({
                   "C": "Gpf_Rpc_Server",
                   "M": "run",
@@ -524,18 +564,18 @@ var PostAffiliatePro = /*#__PURE__*/function () {
                 });
 
               case 2:
-                deeplink = _context11.sent;
-                return _context11.abrupt("return", deeplink.fields[2].value);
+                deeplink = _context12.sent;
+                return _context12.abrupt("return", deeplink.fields[2].value);
 
               case 4:
               case "end":
-                return _context11.stop();
+                return _context12.stop();
             }
           }
-        }, _callee11, this);
+        }, _callee12, this);
       }));
 
-      function deeplink(_x16, _x17) {
+      function deeplink(_x18, _x19) {
         return _deeplink.apply(this, arguments);
       }
 
