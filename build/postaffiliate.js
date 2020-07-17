@@ -322,10 +322,11 @@ var PostAffiliatePro = /*#__PURE__*/function () {
 
               case 2:
                 result = _context6.sent;
+                console.log(result);
                 if (result) result = this.__parseResult(result);
                 return _context6.abrupt("return", result);
 
-              case 5:
+              case 6:
               case "end":
                 return _context6.stop();
             }
@@ -353,7 +354,7 @@ var PostAffiliatePro = /*#__PURE__*/function () {
                   "C": "Gpf_Rpc_Server",
                   "M": "run",
                   "requests": [{
-                    "C": "Pap_Affiliates_Promo_CampaignsGrid",
+                    "C": "Pap_Features_Common_AffiliateCampaignsGrid",
                     "M": "getRows",
                     "offset": offset,
                     "limit": limit,
@@ -363,9 +364,10 @@ var PostAffiliatePro = /*#__PURE__*/function () {
 
               case 2:
                 campaigns = _context7.sent;
+                console.log(campaigns);
                 return _context7.abrupt("return", campaigns.data);
 
-              case 4:
+              case 5:
               case "end":
                 return _context7.stop();
             }

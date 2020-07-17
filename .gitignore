@@ -111,3 +111,8 @@ coverage
 exports
 .cache
 #build
+
+
+src/test.js
+build/test.js
+build/test.js.map
