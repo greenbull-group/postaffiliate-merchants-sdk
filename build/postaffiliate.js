@@ -839,15 +839,17 @@ var PostAffiliatePro = /*#__PURE__*/function () {
       return deeplink;
     }()
     /**
-     *
-     * @param categories : string
+     * @param campaignid : int|null
+     * @param categories : string|null
+     * @param offset : int
+     * @param limit : int
      * @returns {Promise<void>}
      */
 
   }, {
     key: "banners",
     value: function () {
-      var _banners = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17(categories, offset, limit) {
+      var _banners = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17(campaignid, categories, offset, limit) {
         var filters, banners;
         return regeneratorRuntime.wrap(function _callee17$(_context17) {
           while (1) {
@@ -855,7 +857,8 @@ var PostAffiliatePro = /*#__PURE__*/function () {
               case 0:
                 filters = [["rstatus", "NE", "N"]];
                 if (categories) filters.push(["categoryid", "IN", categories]);
-                _context17.next = 4;
+                if (campaignid) filters.push(["campaignid", "E", campaignid]);
+                _context17.next = 5;
                 return this.command({
                   "C": "Gpf_Rpc_Server",
                   "M": "run",
@@ -872,11 +875,11 @@ var PostAffiliatePro = /*#__PURE__*/function () {
                   }]
                 });
 
-              case 4:
+              case 5:
                 banners = _context17.sent;
                 return _context17.abrupt("return", banners.data);
 
-              case 6:
+              case 7:
               case "end":
                 return _context17.stop();
             }
@@ -884,7 +887,7 @@ var PostAffiliatePro = /*#__PURE__*/function () {
         }, _callee17, this);
       }));
 
-      function banners(_x41, _x42, _x43) {
+      function banners(_x41, _x42, _x43, _x44) {
         return _banners.apply(this, arguments);
       }
 

@@ -386,14 +386,18 @@ export default class PostAffiliatePro {
   }
 
   /**
-   *
-   * @param categories : string
+   * @param campaignid : int|null
+   * @param categories : string|null
+   * @param offset : int
+   * @param limit : int
    * @returns {Promise<void>}
    */
-  async banners(categories, offset, limit) {
+  async banners(campaignid, categories, offset, limit) {
     let filters = [["rstatus", "NE", "N"]];
-    if(categories)
+    if (categories)
       filters.push(["categoryid", "IN", categories]);
+    if (campaignid)
+      filters.push(["campaignid", "E", campaignid]);
     let banners = await this.command({
       "C": "Gpf_Rpc_Server",
       "M": "run",
