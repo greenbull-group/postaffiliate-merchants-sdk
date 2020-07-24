@@ -4,7 +4,6 @@
   "main": "./build/postaffiliate.js",
   "author": "Greennbull",
   "license": "MIT",
-  "type": "module",
   "scripts": {
     "dev": "yarn build & node build/sample.js",
     "build": "babel src -s -D -d build",

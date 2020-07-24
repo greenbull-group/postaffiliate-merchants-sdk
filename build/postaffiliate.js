@@ -453,7 +453,7 @@ var PostAffiliatePro = /*#__PURE__*/function () {
      * @param email : string
      * @param password : string
      * @param firstname : string
-     * @param lastname : string
+     * @param lastname : string A|D|P
      * @param status : string
      * @param parentuserid : string
      * @param managername : string
@@ -510,7 +510,7 @@ var PostAffiliatePro = /*#__PURE__*/function () {
     }()
     /**
      *
-     * @param status : A for Approved OR D for Declined OR P for Pending
+     * @param status : A|D|P
      * @param ids : [string]
      * @returns {Promise<*>}
      */
