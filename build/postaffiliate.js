@@ -838,6 +838,58 @@ var PostAffiliatePro = /*#__PURE__*/function () {
 
       return deeplink;
     }()
+    /**
+     *
+     * @param categories : string
+     * @returns {Promise<void>}
+     */
+
+  }, {
+    key: "banners",
+    value: function () {
+      var _banners = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17(categories, offset, limit) {
+        var filters, banners;
+        return regeneratorRuntime.wrap(function _callee17$(_context17) {
+          while (1) {
+            switch (_context17.prev = _context17.next) {
+              case 0:
+                filters = [["rstatus", "NE", "N"]];
+                if (categories) filters.push(["categoryid", "IN", categories]);
+                _context17.next = 4;
+                return this.command({
+                  "C": "Gpf_Rpc_Server",
+                  "M": "run",
+                  "requests": [{
+                    "C": "Pap_Merchants_Banner_BannersGrid",
+                    "M": "getRows",
+                    "sort_col": "rorder",
+                    "sort_asc": true,
+                    "offset": offset,
+                    "limit": limit,
+                    //"filters": [["rstatus", "NE", "N"], ["categoryid", "IN", "3,6"]],
+                    "filters": filters,
+                    "columns": [["id"], ["id"], ["banner"], ["rtype"], ["isconfirmed"], ["destinationurl"], ["rstatus"], ["categoryid"], ["rorder"], ["actions"]]
+                  }]
+                });
+
+              case 4:
+                banners = _context17.sent;
+                return _context17.abrupt("return", banners.data);
+
+              case 6:
+              case "end":
+                return _context17.stop();
+            }
+          }
+        }, _callee17, this);
+      }));
+
+      function banners(_x41, _x42, _x43) {
+        return _banners.apply(this, arguments);
+      }
+
+      return banners;
+    }()
   }]);
 
   return PostAffiliatePro;

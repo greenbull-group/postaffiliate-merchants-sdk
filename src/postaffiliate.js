@@ -384,4 +384,32 @@ export default class PostAffiliatePro {
 
     return deeplink.fields[2].value;
   }
+
+  /**
+   *
+   * @param categories : string
+   * @returns {Promise<void>}
+   */
+  async banners(categories, offset, limit) {
+    let filters = [["rstatus", "NE", "N"]];
+    if(categories)
+      filters.push(["categoryid", "IN", categories]);
+    let banners = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_Banner_BannersGrid",
+        "M": "getRows",
+        "sort_col": "rorder",
+        "sort_asc": true,
+        "offset": offset,
+        "limit": limit,
+        //"filters": [["rstatus", "NE", "N"], ["categoryid", "IN", "3,6"]],
+        "filters": filters,
+        "columns": [["id"], ["id"], ["banner"], ["rtype"], ["isconfirmed"], ["destinationurl"], ["rstatus"], ["categoryid"], ["rorder"], ["actions"]]
+      }]
+    });
+
+    return banners.data;
+  }
 }
