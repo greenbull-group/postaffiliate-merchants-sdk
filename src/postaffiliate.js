@@ -156,6 +156,12 @@ export default class PostAffiliatePro {
     return result;
   }
 
+  /**
+   *
+   * @param offset
+   * @param limit
+   * @returns {Promise<*>}
+   */
   async affiliatesInCampaigns(offset, limit) {
     let campaigns = await this.command({
       "C": "Gpf_Rpc_Server",
@@ -170,6 +176,12 @@ export default class PostAffiliatePro {
     return campaigns.data;
   }
 
+  /**
+   *
+   * @param offset
+   * @param limit
+   * @returns {Promise<*>}
+   */
   async affiliates(offset, limit) {
     let affiliates = await this.command({
       "C": "Gpf_Rpc_Server",
@@ -185,6 +197,86 @@ export default class PostAffiliatePro {
     return affiliates.data;
   }
 
+  /**
+   *
+   * @param email : string
+   * @param password : string
+   * @param firstname : string
+   * @param lastname : string A|D|P
+   * @param status : string
+   * @param parentuserid : string
+   * @param managername : string
+   * @param refid : string
+   * @param company : string|null
+   * @param address : string|null
+   * @param street : string|null
+   * @param city : string|null
+   * @param state : string|null
+   * @param country : string|null
+   * @param postalcode : string|null
+   * @param phonenumber : string|null
+   * @param fax : string|null
+   * @returns {Promise<*>}
+   */
+  async addAffiliates(email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax) {
+    let add = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_User_AffiliateForm",
+        "M": "add",
+        "fields": [["name", "value"], ["Id", ""], ["username", email], ["rpassword", password], ["firstname", firstname], ["lastname", lastname], ["customTimezone", ""], ["useCustomTimezone", "N"], ["lang", ""], ["photo", ""], ["rstatus", status], ["note", ""], ["dontSendEmail", "Y"], ["createSignupReferralComm", "N"], ["parentuserid", parentuserid], ["refid", refid], ["data1", address], ["data2", company], ["data3", street], ["data4", city], ["data5", state], ["data6", country], ["data7", postalcode], ["data8", phonenumber], ["data9", fax], ["data10", managername]]
+      }]
+    });
+    return add;
+  }
+
+  /**
+   *
+   * @param status : A|D|P
+   * @param ids : [string]
+   * @returns {Promise<*>}
+   */
+  async changeStatusAffiliate(status, ids) {
+    let change = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_User_AffiliateForm",
+        "M": "changeStatus",
+        "status": status,
+        "dontSendNotification": "Y",
+        "ids": ids
+      }]
+    });
+    return change;
+  }
+
+  /**
+   * @param ids : [string]
+   * @returns {Promise<*>}
+   */
+  async deleteAffiliate(ids) {
+    let deleted = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_User_AffiliateForm",
+        "M": "deleteRows",
+        "moveChildAffiliates": "N",
+        "ids": ids
+      }]
+    });
+
+    return deleted;
+  }
+
+  /**
+   *
+   * @param offset
+   * @param limit
+   * @returns {Promise<*>}
+   */
   async campaigns(offset, limit) {
     let campaigns = await this.command({
       "C": "Gpf_Rpc_Server",
@@ -202,6 +294,11 @@ export default class PostAffiliatePro {
     return campaigns.data;
   }
 
+  /**
+   *
+   * @param filters : []
+   * @returns {Promise<*>}
+   */
   async campaignsInfos(filters) {
     let infos = await this.command({
       "C": "Gpf_Rpc_Server",
@@ -217,6 +314,13 @@ export default class PostAffiliatePro {
     return infos.data;
   }
 
+  /**
+   *
+   * @param categoryid
+   * @param offset
+   * @param limit
+   * @returns {Promise<*>}
+   */
   async promo(categoryid, offset, limit) {
     let coupons = await this.command({
       "C": "Gpf_Rpc_Server",
@@ -234,6 +338,13 @@ export default class PostAffiliatePro {
     return coupons.data;
   }
 
+  /**
+   *
+   * @param datestart
+   * @param dateend
+   * @param status
+   * @returns {Promise<*>}
+   */
   async report(datestart, dateend, status) {
     let report = await this.command({
       "C": "Gpf_Rpc_Server",
@@ -250,6 +361,12 @@ export default class PostAffiliatePro {
     return report.data;
   }
 
+  /**
+   *
+   * @param url
+   * @param campaignid
+   * @returns {Promise<*>}
+   */
   async deeplink(url, campaignid) {
     let deeplink = await this.command({
       "C": "Gpf_Rpc_Server",
