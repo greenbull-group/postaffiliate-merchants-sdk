@@ -156,6 +156,10 @@ export default class PostAffiliatePro {
     return result;
   }
 
+  async commandResponse(data) {
+    return await this.__getAPI(data);
+  }
+
   /**
    *
    * @param offset
@@ -218,7 +222,7 @@ export default class PostAffiliatePro {
    * @param fax : string|null
    * @returns {Promise<*>}
    */
-  async addAffiliates(email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax) {
+  async addAffiliate(email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax) {
     let add = await this.command({
       "C": "Gpf_Rpc_Server",
       "M": "run",
@@ -229,6 +233,20 @@ export default class PostAffiliatePro {
       }]
     });
     return add;
+  }
+
+  async updateAffiliate(affiliateid, email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax) {
+    let update = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_User_AffiliateForm",
+        "M": "save",
+        "fields": [["name", "value"], ["Id", affiliateid], ["username", email], ["rpassword", password], ["firstname", firstname], ["lastname", lastname], ["customTimezone", ""], ["useCustomTimezone", "N"], ["lang", ""], ["photo", ""], ["rstatus", status], ["note", ""], ["dontSendEmail", "Y"], ["createSignupReferralComm", "N"], ["parentuserid", parentuserid], ["refid", refid], ["data1", address], ["data2", company], ["data3", street], ["data4", city], ["data5", state], ["data6", country], ["data7", postalcode], ["data8", phonenumber], ["data9", fax], ["data10", managername]]
+      }]
+    });
+
+    return update;
   }
 
   /**
@@ -340,25 +358,163 @@ export default class PostAffiliatePro {
 
   /**
    *
-   * @param datestart
-   * @param dateend
-   * @param status
+   * @param campaignid : string|null
+   * @param affiliateid : string|null
+   * @param bannerid : string|null
    * @returns {Promise<*>}
    */
-  async report(datestart, dateend, status) {
-    let report = await this.command({
+  async report(campaignid, affiliateid, bannerid, status, datestart, dateend) {
+    let filters = [];
+    if (campaignid)
+      filters.push(["campaignid", "E", campaignid]);
+    if (affiliateid)
+      filters.push(["userid", "E", affiliateid]);
+    if (bannerid)
+      filters.push(["bannerid", "E", bannerid]);
+    if (status)
+      filters.push(["rstatus", "IN", status]);
+
+    if (datestart && dateend) {
+      // 2020-07-31
+      filters.push(["datetime", "D>=", datestart]);
+      filters.push(["datetime", "D<=", dateend]);
+    }
+
+    //filters.push(["datetime", "DP", "L30D"]);
+    let report = await this.commandResponse({
       "C": "Gpf_Rpc_Server",
       "M": "run",
       "requests": [{
-        "C": "Pap_Affiliates_Reports_TrendsReport",
-        "M": "loadData",
-        "isInitRequest": "N",
-        "filterType": "trends_report",
-        "filters": [["datetime", "D>=", datestart], ["datetime", "D<=", dateend], ["rpc", "=", "Y"], ["groupBy", "=", "day"], ["dataType1", "=", "saleCount"], ["dataType2", "=", "saleCommission"], ["rstatus", "IN", status]]
+        "C": "Pap_Merchants_Reports_TrafficStatsData",
+        "M": "load",
+        "filters": filters
       }],
     });
 
-    return report.data;
+    return report;
+  }
+
+  /**
+   *
+   * @param campaignid : string|null
+   * @param affiliateid : string|null
+   * @param bannerid : string|null
+   * @param datestart : string|null
+   * @param dateend : string|null
+   * @param offset : int
+   * @param limit : int
+   * @returns {Promise<*>}
+   */
+  async reportClicks(campaignid, affiliateid, bannerid, datestart, dateend, offset, limit) {
+    let filters = [];
+    if (campaignid)
+      filters.push(["campaignid", "E", campaignid]);
+    if (affiliateid)
+      filters.push(["userid", "E", affiliateid]);
+    if (bannerid)
+      filters.push(["bannerid", "E", bannerid]);
+    if (datestart && dateend) {
+      // 2020-07-31
+      filters.push(["datetime", "D>=", datestart]);
+      filters.push(["datetime", "D<=", dateend]);
+    }
+
+    let clicks = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_Reports_ClicksGrid",
+        "M": "getRows",
+        "sort_col": "datetime",
+        "sort_asc": false,
+        "offset": offset,
+        "limit": limit,
+        "filters": filters,
+        "columns": [["id"], ["id"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["banner"], ["campaign"], ["countrycode"], ["rtype"], ["datetime"], ["referrerurl"], ["visitorid"], ["ip"], ["cdata1"], ["cdata2"]]
+      }]
+    });
+
+    return clicks.data;
+  }
+
+  /**
+   *
+   * @param campaignid : string|null
+   * @param affiliateid : string|null
+   * @param bannerid : string|null
+   * @param type : string|null
+   * @param datestart : string|null
+   * @param dateend : string|null
+   * @param offset : int
+   * @param limit : int
+   * @returns {Promise<*>}
+   */
+  async reportTransactions(campaignid, affiliateid, bannerid, type, datestart, dateend, offset, limit) {
+    let filters = [];
+    if (campaignid)
+      filters.push(["campaignid", "E", campaignid]);
+    if (affiliateid)
+      filters.push(["userid", "E", affiliateid]);
+    if (bannerid)
+      filters.push(["bannerid", "E", bannerid]);
+    if (type)
+      filters.push(["rtype", "IN", type]); // "S,A"
+    if (datestart && dateend) {
+      // 2020-07-31
+      filters.push(["dateinserted", "D>=", datestart]);
+      filters.push(["dateinserted", "D<=", dateend]);
+    }
+    let transactions = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_Transaction_TransactionsGrid",
+        "M": "getRows",
+        "sort_col": "dateinserted",
+        "sort_asc": false,
+        "offset": offset,
+        "limit": limit,
+        "filters": filters,
+        "columns": [["id"], ["id"], ["commission"], ["totalcost"], ["t_orderid"], ["productid"], ["dateinserted"], ["name"], ["rtype"], ["tier"], ["commissionTypeName"], ["rstatus"], ["payoutstatus"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["actions"]]
+      }]
+    });
+
+    return transactions.data;
+  }
+
+  async invoices(offset, limit) {
+    let invoices = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_Payout_PayoutsToAffiliatesGrid",
+        "M": "getRows",
+        "sort_col": "dateinserted",
+        "sort_asc": true,
+        "offset": offset,
+        "limit": limit,
+        "columns": [["id"], ["id"], ["payouthistoryid"], ["dateinserted"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["amount"], ["affiliatenote"], ["actions"]]
+      }]
+    });
+
+    return invoices;
+  }
+
+  async downloadInvoice(invoiceid) {
+    let invoice = await this.commandResponse({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_Payout_PayoutHistoryForm",
+        "M": "downloadAsPdf",
+        "invoiceId": invoiceid,
+        "FormResponse": "Y",
+        "FormRequest": "Y"
+      }]
+    });
+
+    // https://arya.postaffiliatepro.com/scripts/server.php?C=Pap_Merchants_Payout_PayoutHistoryForm&M=downloadAsPdf&S=v2tanoufspjxxkwrjkp0sca5wo8u6f46&FormRequest=Y&invoiceId=lxnh7b03&FormResponse=Y
+    return invoice;
   }
 
   /**
