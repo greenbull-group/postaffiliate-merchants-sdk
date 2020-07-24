@@ -1068,7 +1068,7 @@ var PostAffiliatePro = /*#__PURE__*/function () {
                 invoice = _context21.sent;
                 return _context21.abrupt("return", invoice);
 
-              case 5:
+              case 4:
               case "end":
                 return _context21.stop();
             }
