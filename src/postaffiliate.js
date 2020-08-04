@@ -225,26 +225,114 @@ export default class PostAffiliatePro {
    * @returns {Promise<*>}
    */
   async addAffiliate(email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax) {
+    let params = [
+      ["name", "value"],
+      ["Id", ""],
+      ["username", email],
+      ["rpassword", password],
+      ["customTimezone", ""],
+      ["useCustomTimezone", "N"],
+      ["lang", ""],
+      ["photo", ""],
+      ["note", ""],
+      ["dontSendEmail", "Y"],
+      ["createSignupReferralComm", "N"],
+    ];
+    if(firstname)
+      params.push(["firstname", firstname]);
+    if(lastname)
+      params.push(["lastname", lastname]);
+    if(status)
+      params.push(["rstatus", status]);
+    if(parentuserid)
+      params.push(["parentuserid", parentuserid]);
+    if(refid)
+      params.push(["refid", refid]);
+    if(address)
+      params.push(["data1", address]);
+    if(company)
+      params.push(["data2", company]);
+    if(street)
+      params.push(["data3", street]);
+    if(city)
+      params.push(["data4", city]);
+    if(state)
+      params.push(["data5", state]);
+    if(country)
+      params.push(["data6", country]);
+    if(postalcode)
+      params.push(["data7", postalcode]);
+    if(phonenumber)
+      params.push(["data8", phonenumber]);
+    if(fax)
+      params.push(["data9", fax]);
+    if(managername)
+      params.push(["data10", managername]);
+
     let add = await this.command({
       "C": "Gpf_Rpc_Server",
       "M": "run",
       "requests": [{
         "C": "Pap_Merchants_User_AffiliateForm",
         "M": "add",
-        "fields": [["name", "value"], ["Id", ""], ["username", email], ["rpassword", password], ["firstname", firstname], ["lastname", lastname], ["customTimezone", ""], ["useCustomTimezone", "N"], ["lang", ""], ["photo", ""], ["rstatus", status], ["note", ""], ["dontSendEmail", "Y"], ["createSignupReferralComm", "N"], ["parentuserid", parentuserid], ["refid", refid], ["data1", address], ["data2", company], ["data3", street], ["data4", city], ["data5", state], ["data6", country], ["data7", postalcode], ["data8", phonenumber], ["data9", fax], ["data10", managername]]
+        "fields": params
       }]
     });
     return add;
   }
 
   async updateAffiliate(affiliateid, email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax) {
+    let params = [
+      ["name", "value"],
+      ["Id", affiliateid],
+      ["username", email],
+      ["customTimezone", ""],
+      ["useCustomTimezone", "N"],
+      ["lang", ""],
+      ["photo", ""],
+      ["note", ""],
+      ["dontSendEmail", "Y"],
+      ["createSignupReferralComm", "N"],
+    ];
+    if(password)
+      params.push(["rpassword", password]);
+    if(firstname)
+      params.push(["firstname", firstname]);
+    if(lastname)
+      params.push(["lastname", lastname]);
+    if(status)
+      params.push(["rstatus", status]);
+    if(parentuserid)
+      params.push(["parentuserid", parentuserid]);
+    if(refid)
+      params.push(["refid", refid]);
+    if(address)
+      params.push(["data1", address]);
+    if(company)
+      params.push(["data2", company]);
+    if(street)
+      params.push(["data3", street]);
+    if(city)
+      params.push(["data4", city]);
+    if(state)
+      params.push(["data5", state]);
+    if(country)
+      params.push(["data6", country]);
+    if(postalcode)
+      params.push(["data7", postalcode]);
+    if(phonenumber)
+      params.push(["data8", phonenumber]);
+    if(fax)
+      params.push(["data9", fax]);
+    if(managername)
+      params.push(["data10", managername]);
     let update = await this.command({
       "C": "Gpf_Rpc_Server",
       "M": "run",
       "requests": [{
         "C": "Pap_Merchants_User_AffiliateForm",
         "M": "save",
-        "fields": [["name", "value"], ["Id", affiliateid], ["username", email], ["rpassword", password], ["firstname", firstname], ["lastname", lastname], ["customTimezone", ""], ["useCustomTimezone", "N"], ["lang", ""], ["photo", ""], ["rstatus", status], ["note", ""], ["dontSendEmail", "Y"], ["createSignupReferralComm", "N"], ["parentuserid", parentuserid], ["refid", refid], ["data1", address], ["data2", company], ["data3", street], ["data4", city], ["data5", state], ["data6", country], ["data7", postalcode], ["data8", phonenumber], ["data9", fax], ["data10", managername]]
+        "fields": params
       }]
     });
 
