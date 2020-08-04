@@ -16,7 +16,8 @@ export default class PostAffiliatePro {
 
   async __getSession() {
     let requestSession = await axios.get(this.urlLogin);
-    this.session = requestSession.headers["set-cookie"][0].split(";")[0].replace("A=", "");
+    if (requestSession.headers && requestSession.headers["set-cookie"] && Array.isArray(requestSession.headers["set-cookie"]))
+      this.session = requestSession.headers["set-cookie"][0].split(";")[0].replace("A=", "");
     return this.session;
   }
 
@@ -48,7 +49,8 @@ export default class PostAffiliatePro {
       }
     });
 
-    this.cookies = login.headers["set-cookie"].join(";");
+    if (login && login.headers && login.headers["set-cookie"])
+      this.cookies = login.headers["set-cookie"].join(";");
     let o = await this.__parseResult(login.data);
     if (o.fields && o.fields.length > 0) {
       this.session = await this.getValue(o.fields, "S");

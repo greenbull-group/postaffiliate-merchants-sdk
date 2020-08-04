@@ -68,7 +68,7 @@ var PostAffiliatePro = /*#__PURE__*/function () {
 
               case 2:
                 requestSession = _context.sent;
-                this.session = requestSession.headers["set-cookie"][0].split(";")[0].replace("A=", "");
+                if (requestSession.headers && requestSession.headers["set-cookie"] && Array.isArray(requestSession.headers["set-cookie"])) this.session = requestSession.headers["set-cookie"][0].split(";")[0].replace("A=", "");
                 return _context.abrupt("return", this.session);
 
               case 5:
@@ -122,7 +122,7 @@ var PostAffiliatePro = /*#__PURE__*/function () {
 
               case 6:
                 login = _context2.sent;
-                this.cookies = login.headers["set-cookie"].join(";");
+                if (login && login.headers && login.headers["set-cookie"]) this.cookies = login.headers["set-cookie"].join(";");
                 _context2.next = 10;
                 return this.__parseResult(login.data);
 
