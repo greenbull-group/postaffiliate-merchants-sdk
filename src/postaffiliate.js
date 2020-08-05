@@ -238,35 +238,35 @@ export default class PostAffiliatePro {
       ["dontSendEmail", "Y"],
       ["createSignupReferralComm", "N"],
     ];
-    if(firstname)
+    if (firstname)
       params.push(["firstname", firstname]);
-    if(lastname)
+    if (lastname)
       params.push(["lastname", lastname]);
-    if(status)
+    if (status)
       params.push(["rstatus", status]);
-    if(parentuserid)
+    if (parentuserid)
       params.push(["parentuserid", parentuserid]);
-    if(refid)
+    if (refid)
       params.push(["refid", refid]);
-    if(address)
+    if (address)
       params.push(["data1", address]);
-    if(company)
+    if (company)
       params.push(["data2", company]);
-    if(street)
+    if (street)
       params.push(["data3", street]);
-    if(city)
+    if (city)
       params.push(["data4", city]);
-    if(state)
+    if (state)
       params.push(["data5", state]);
-    if(country)
+    if (country)
       params.push(["data6", country]);
-    if(postalcode)
+    if (postalcode)
       params.push(["data7", postalcode]);
-    if(phonenumber)
+    if (phonenumber)
       params.push(["data8", phonenumber]);
-    if(fax)
+    if (fax)
       params.push(["data9", fax]);
-    if(managername)
+    if (managername)
       params.push(["data10", managername]);
 
     let add = await this.command({
@@ -294,37 +294,37 @@ export default class PostAffiliatePro {
       ["dontSendEmail", "Y"],
       ["createSignupReferralComm", "N"],
     ];
-    if(password)
+    if (password)
       params.push(["rpassword", password]);
-    if(firstname)
+    if (firstname)
       params.push(["firstname", firstname]);
-    if(lastname)
+    if (lastname)
       params.push(["lastname", lastname]);
-    if(status)
+    if (status)
       params.push(["rstatus", status]);
-    if(parentuserid)
+    if (parentuserid)
       params.push(["parentuserid", parentuserid]);
-    if(refid)
+    if (refid)
       params.push(["refid", refid]);
-    if(address)
+    if (address)
       params.push(["data1", address]);
-    if(company)
+    if (company)
       params.push(["data2", company]);
-    if(street)
+    if (street)
       params.push(["data3", street]);
-    if(city)
+    if (city)
       params.push(["data4", city]);
-    if(state)
+    if (state)
       params.push(["data5", state]);
-    if(country)
+    if (country)
       params.push(["data6", country]);
-    if(postalcode)
+    if (postalcode)
       params.push(["data7", postalcode]);
-    if(phonenumber)
+    if (phonenumber)
       params.push(["data8", phonenumber]);
-    if(fax)
+    if (fax)
       params.push(["data9", fax]);
-    if(managername)
+    if (managername)
       params.push(["data10", managername]);
     let update = await this.command({
       "C": "Gpf_Rpc_Server",
@@ -380,12 +380,16 @@ export default class PostAffiliatePro {
   }
 
   /**
-   *
+   * @param category: string|null
    * @param offset
    * @param limit
    * @returns {Promise<*>}
    */
-  async campaigns(offset, limit) {
+  async campaigns(category, offset, limit) {
+    let filters = [["rstatus", "IN", "A"], ["rtype", "IN", "P"]];
+    if (category) {
+      filters.push(["campaigncategoryid", "IN", category]);
+    }
     let campaigns = await this.command({
       "C": "Gpf_Rpc_Server",
       "M": "run",
@@ -395,7 +399,8 @@ export default class PostAffiliatePro {
         "offset": offset,
         "limit": limit,
         "sort_col": "rorder",
-        "sort_asc": true
+        "sort_asc": true,
+        "filters": filters
       }]
     });
 
@@ -590,7 +595,7 @@ export default class PostAffiliatePro {
       }]
     });
 
-    return invoices;
+    return invoices.data;
   }
 
   async downloadInvoice(invoiceid) {
@@ -642,7 +647,7 @@ export default class PostAffiliatePro {
    * @returns {Promise<void>}
    */
   async banners(campaignid, categories, offset, limit) {
-    let filters = [["rstatus", "NE", "N"]];
+    let filters = [["rstatus", "NE", "N"], ["type", "IN", "A"]];
     if (categories)
       filters.push(["categoryid", "IN", categories]);
     if (campaignid)
@@ -657,7 +662,6 @@ export default class PostAffiliatePro {
         "sort_asc": true,
         "offset": offset,
         "limit": limit,
-        //"filters": [["rstatus", "NE", "N"], ["categoryid", "IN", "3,6"]],
         "filters": filters,
         "columns": [["id"], ["id"], ["banner"], ["rtype"], ["isconfirmed"], ["destinationurl"], ["rstatus"], ["categoryid"], ["rorder"], ["actions"]]
       }]

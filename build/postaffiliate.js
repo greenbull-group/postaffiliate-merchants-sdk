@@ -329,14 +329,20 @@ class PostAffiliatePro {
     return deleted;
   }
   /**
-   *
+   * @param category: string|null
    * @param offset
    * @param limit
    * @returns {Promise<*>}
    */
 
 
-  async campaigns(offset, limit) {
+  async campaigns(category, offset, limit) {
+    let filters = [["rstatus", "IN", "A"], ["rtype", "IN", "P"]];
+
+    if (category) {
+      filters.push(["campaigncategoryid", "IN", category]);
+    }
+
     let campaigns = await this.command({
       "C": "Gpf_Rpc_Server",
       "M": "run",
@@ -346,7 +352,8 @@ class PostAffiliatePro {
         "offset": offset,
         "limit": limit,
         "sort_col": "rorder",
-        "sort_asc": true
+        "sort_asc": true,
+        "filters": filters
       }]
     });
     return campaigns.data;
@@ -531,7 +538,7 @@ class PostAffiliatePro {
         "columns": [["id"], ["id"], ["payouthistoryid"], ["dateinserted"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["amount"], ["affiliatenote"], ["actions"]]
       }]
     });
-    return invoices;
+    return invoices.data;
   }
 
   async downloadInvoice(invoiceid) {
@@ -583,7 +590,7 @@ class PostAffiliatePro {
 
 
   async banners(campaignid, categories, offset, limit) {
-    let filters = [["rstatus", "NE", "N"]];
+    let filters = [["rstatus", "NE", "N"], ["type", "IN", "A"]];
     if (categories) filters.push(["categoryid", "IN", categories]);
     if (campaignid) filters.push(["campaignid", "E", campaignid]);
     let banners = await this.command({
@@ -596,7 +603,6 @@ class PostAffiliatePro {
         "sort_asc": true,
         "offset": offset,
         "limit": limit,
-        //"filters": [["rstatus", "NE", "N"], ["categoryid", "IN", "3,6"]],
         "filters": filters,
         "columns": [["id"], ["id"], ["banner"], ["rtype"], ["isconfirmed"], ["destinationurl"], ["rstatus"], ["categoryid"], ["rorder"], ["actions"]]
       }]
