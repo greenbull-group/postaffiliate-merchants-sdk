@@ -434,6 +434,7 @@ class PostAffiliatePro {
    * @param campaignid : string|null
    * @param affiliateid : string|null
    * @param bannerid : string|null
+   * @param type : string|null
    * @param datestart : string|null
    * @param dateend : string|null
    * @param offset : int
@@ -442,10 +443,12 @@ class PostAffiliatePro {
    */
 
 
-  async reportClicks(campaignid, affiliateid, bannerid, datestart, dateend, offset, limit) {
+  async reportClicks(campaignid, affiliateid, bannerid, type, datestart, dateend, offset, limit) {
     let filters = [];
     if (campaignid) filters.push(["campaignid", "E", campaignid]);
     if (affiliateid) filters.push(["userid", "E", affiliateid]);
+    if (type) filters.push(["rtype", "IN", type]); // R,U,D : (Repeated / Unique / Denied)
+
     if (bannerid) filters.push(["bannerid", "E", bannerid]);
 
     if (datestart && dateend) {
@@ -465,7 +468,7 @@ class PostAffiliatePro {
         "offset": offset,
         "limit": limit,
         "filters": filters,
-        "columns": [["id"], ["id"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["banner"], ["campaign"], ["countrycode"], ["rtype"], ["datetime"], ["referrerurl"], ["visitorid"], ["ip"], ["cdata1"], ["cdata2"]]
+        "columns": [["id"], ["id"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["bannerid"], ["campaignid"], ["countrycode"], ["rtype"], ["datetime"], ["referrerurl"], ["visitorid"], ["ip"], ["cdata1"], ["cdata2"]]
       }]
     });
     return clicks.data;
@@ -508,7 +511,7 @@ class PostAffiliatePro {
         "offset": offset,
         "limit": limit,
         "filters": filters,
-        "columns": [["id"], ["id"], ["commission"], ["totalcost"], ["t_orderid"], ["productid"], ["dateinserted"], ["name"], ["rtype"], ["tier"], ["commissionTypeName"], ["rstatus"], ["payoutstatus"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["actions"]]
+        "columns": [["id"], ["id"], ["commission"], ["totalcost"], ["t_orderid"], ["productid"], ["dateinserted"], ["name"], ["rtype"], ["tier"], ["commissionTypeName"], ["rstatus"], ["payoutstatus"], ["firstname"], ["lastname"], ["userid"], ["bannerid"], ["campaignid"], ["userstatus"], ["actions"]]
       }]
     });
     return transactions.data;
