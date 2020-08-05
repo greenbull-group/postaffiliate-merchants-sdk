@@ -83,11 +83,11 @@ export default class PostAffiliatePro {
 
   async __parseResult(result) {
     if (result.length > 0) {
-      let returnData = [], returnFields = [], headers = [];
+      let returnData = [], returnFields = [], headers = [], count = 0;
       if (result[0].rows || result[0].fields) {
         let rows = result[0].rows;
         let fields = (result[0].fields) ? result[0].fields : null;
-
+        count = result[0].count;
         for (let key in rows) {
           if (key == 0) headers = rows[0];
           else {
@@ -130,7 +130,8 @@ export default class PostAffiliatePro {
 
       return {
         data: returnData,
-        fields: returnFields
+        fields: returnFields,
+        count: count
       };
     } else {
       return null;
@@ -404,7 +405,7 @@ export default class PostAffiliatePro {
       }]
     });
 
-    return campaigns.data;
+    return campaigns;
   }
 
   /**
@@ -532,7 +533,7 @@ export default class PostAffiliatePro {
       }]
     });
 
-    return clicks.data;
+    return clicks;
   }
 
   /**
@@ -577,7 +578,7 @@ export default class PostAffiliatePro {
       }]
     });
 
-    return transactions.data;
+    return transactions;
   }
 
   async invoices(affiliateid, offset, limit) {
@@ -596,7 +597,7 @@ export default class PostAffiliatePro {
       }]
     });
 
-    return invoices.data;
+    return invoices;
   }
 
   async downloadInvoice(invoiceid) {
@@ -668,6 +669,6 @@ export default class PostAffiliatePro {
       }]
     });
 
-    return banners.data;
+    return banners;
   }
 }

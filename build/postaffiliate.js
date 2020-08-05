@@ -91,11 +91,13 @@ class PostAffiliatePro {
     if (result.length > 0) {
       let returnData = [],
           returnFields = [],
-          headers = [];
+          headers = [],
+          count = 0;
 
       if (result[0].rows || result[0].fields) {
         let rows = result[0].rows;
         let fields = result[0].fields ? result[0].fields : null;
+        count = result[0].count;
 
         for (let key in rows) {
           if (key == 0) headers = rows[0];else {
@@ -134,7 +136,8 @@ class PostAffiliatePro {
 
       return {
         data: returnData,
-        fields: returnFields
+        fields: returnFields,
+        count: count
       };
     } else {
       return null;
@@ -356,7 +359,7 @@ class PostAffiliatePro {
         "filters": filters
       }]
     });
-    return campaigns.data;
+    return campaigns;
   }
   /**
    *
@@ -478,7 +481,7 @@ class PostAffiliatePro {
         "columns": [["id"], ["id"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["bannerid"], ["campaignid"], ["countrycode"], ["rtype"], ["datetime"], ["referrerurl"], ["visitorid"], ["ip"], ["cdata1"], ["cdata2"]]
       }]
     });
-    return clicks.data;
+    return clicks;
   }
   /**
    *
@@ -521,7 +524,7 @@ class PostAffiliatePro {
         "columns": [["id"], ["id"], ["commission"], ["totalcost"], ["t_orderid"], ["productid"], ["dateinserted"], ["name"], ["rtype"], ["tier"], ["commissionTypeName"], ["rstatus"], ["payoutstatus"], ["firstname"], ["lastname"], ["userid"], ["bannerid"], ["campaignid"], ["userstatus"], ["actions"]]
       }]
     });
-    return transactions.data;
+    return transactions;
   }
 
   async invoices(affiliateid, offset, limit) {
@@ -539,7 +542,7 @@ class PostAffiliatePro {
         "columns": [["id"], ["id"], ["payouthistoryid"], ["dateinserted"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["amount"], ["affiliatenote"], ["actions"]]
       }]
     });
-    return invoices.data;
+    return invoices;
   }
 
   async downloadInvoice(invoiceid) {
@@ -608,7 +611,7 @@ class PostAffiliatePro {
         "columns": [["id"], ["id"], ["banner"], ["rtype"], ["isconfirmed"], ["destinationurl"], ["rstatus"], ["categoryid"], ["rorder"], ["actions"]]
       }]
     });
-    return banners.data;
+    return banners;
   }
 
 }
