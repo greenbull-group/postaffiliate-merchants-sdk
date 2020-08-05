@@ -580,7 +580,7 @@ export default class PostAffiliatePro {
     return transactions.data;
   }
 
-  async invoices(offset, limit) {
+  async invoices(affiliateid, offset, limit) {
     let invoices = await this.command({
       "C": "Gpf_Rpc_Server",
       "M": "run",
@@ -591,6 +591,7 @@ export default class PostAffiliatePro {
         "sort_asc": true,
         "offset": offset,
         "limit": limit,
+        "filters": [["userid", "E", affiliateid]],
         "columns": [["id"], ["id"], ["payouthistoryid"], ["dateinserted"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["amount"], ["affiliatenote"], ["actions"]]
       }]
     });
