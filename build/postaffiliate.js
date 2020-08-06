@@ -478,7 +478,7 @@ class PostAffiliatePro {
         "offset": offset,
         "limit": limit,
         "filters": filters,
-        "columns": [["id"], ["id"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["bannerid"], ["banner"], ["campaignid"], ["campaign"], ["countrycode"], ["rtype"], ["datetime"], ["referrerurl"], ["visitorid"], ["ip"], ["cdata1"], ["cdata2"]]
+        "columns": [["id"], ["id"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["bannerid"], ["banner"], ["campaignid"], ["campaign"], ["countrycode"], ["rtype"], ["datetime"], ["referrerurl"], ["destinationurl"], ["visitorid"], ["ip"], ["cdata1"], ["cdata2"]]
       }]
     });
     return clicks;
@@ -497,7 +497,7 @@ class PostAffiliatePro {
    */
 
 
-  async reportTransactions(campaignid, affiliateid, bannerid, type, payoutstatus, datestart, dateend, offset, limit) {
+  async reportTransactions(campaignid, affiliateid, bannerid, type, payoutstatus, visitorid, datestart, dateend, offset, limit) {
     let filters = [];
     if (campaignid) filters.push(["campaignid", "E", campaignid]);
     if (affiliateid) filters.push(["userid", "E", affiliateid]);
@@ -505,6 +505,8 @@ class PostAffiliatePro {
     if (type) filters.push(["rtype", "IN", type]); // "S,A"
 
     if (payoutstatus) filters.push(["payoutstatus", "IN", payoutstatus]); // "P"
+
+    if (visitorid) filters.push(["visitorid", "E", visitorid]);
 
     if (datestart && dateend) {
       // 2020-07-31

@@ -529,7 +529,7 @@ export default class PostAffiliatePro {
         "offset": offset,
         "limit": limit,
         "filters": filters,
-        "columns": [["id"], ["id"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["bannerid"], ["banner"], ["campaignid"], ["campaign"], ["countrycode"], ["rtype"], ["datetime"], ["referrerurl"], ["visitorid"], ["ip"], ["cdata1"], ["cdata2"]]
+        "columns": [["id"], ["id"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["bannerid"], ["banner"], ["campaignid"], ["campaign"], ["countrycode"], ["rtype"], ["datetime"], ["referrerurl"], ["destinationurl"], ["visitorid"], ["ip"], ["cdata1"], ["cdata2"]]
       }]
     });
 
@@ -548,7 +548,7 @@ export default class PostAffiliatePro {
    * @param limit : int
    * @returns {Promise<*>}
    */
-  async reportTransactions(campaignid, affiliateid, bannerid, type, payoutstatus, datestart, dateend, offset, limit) {
+  async reportTransactions(campaignid, affiliateid, bannerid, type, payoutstatus, visitorid, datestart, dateend, offset, limit) {
     let filters = [];
     if (campaignid)
       filters.push(["campaignid", "E", campaignid]);
@@ -560,6 +560,8 @@ export default class PostAffiliatePro {
       filters.push(["rtype", "IN", type]); // "S,A"
     if (payoutstatus)
       filters.push(["payoutstatus", "IN", payoutstatus]); // "P"
+    if (visitorid)
+      filters.push(["visitorid", "E", visitorid]);
     if (datestart && dateend) {
       // 2020-07-31
       filters.push(["dateinserted", "D>=", datestart]);
@@ -676,7 +678,7 @@ export default class PostAffiliatePro {
 
   async reportPayouts(affiliateid) {
     let filters = [];
-    if(affiliateid)
+    if (affiliateid)
       filters.push(["userid", "E", affiliateid]);
     let report = await this.command({
       "C": "Gpf_Rpc_Server",
