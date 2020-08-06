@@ -616,6 +616,21 @@ class PostAffiliatePro {
     return banners;
   }
 
+  async reportPayouts(affiliateid) {
+    let filters = [];
+    if (affiliateid) filters.push(["userid", "E", affiliateid]);
+    let report = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_Payout_PayoutsInfoData",
+        "M": "load",
+        "filters": filters
+      }]
+    });
+    return report;
+  }
+
 }
 
 exports.default = PostAffiliatePro;
