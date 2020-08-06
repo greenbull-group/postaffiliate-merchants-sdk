@@ -497,12 +497,14 @@ class PostAffiliatePro {
    */
 
 
-  async reportTransactions(campaignid, affiliateid, bannerid, type, datestart, dateend, offset, limit) {
+  async reportTransactions(campaignid, affiliateid, bannerid, type, payoutstatus, datestart, dateend, offset, limit) {
     let filters = [];
     if (campaignid) filters.push(["campaignid", "E", campaignid]);
     if (affiliateid) filters.push(["userid", "E", affiliateid]);
     if (bannerid) filters.push(["bannerid", "E", bannerid]);
     if (type) filters.push(["rtype", "IN", type]); // "S,A"
+
+    if (payoutstatus) filters.push(["payoutstatus", "IN", payoutstatus]); // "P"
 
     if (datestart && dateend) {
       // 2020-07-31
