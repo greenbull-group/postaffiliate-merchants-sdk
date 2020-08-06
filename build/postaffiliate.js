@@ -489,6 +489,8 @@ class PostAffiliatePro {
    * @param affiliateid : string|null
    * @param bannerid : string|null
    * @param type : string|null
+   * @param payoutstatus : string|null
+   * @param visitorid : string|null
    * @param datestart : string|null
    * @param dateend : string|null
    * @param offset : int
