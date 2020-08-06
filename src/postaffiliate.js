@@ -529,7 +529,7 @@ export default class PostAffiliatePro {
         "offset": offset,
         "limit": limit,
         "filters": filters,
-        "columns": [["id"], ["id"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["bannerid"], ["campaignid"], ["countrycode"], ["rtype"], ["datetime"], ["referrerurl"], ["visitorid"], ["ip"], ["cdata1"], ["cdata2"]]
+        "columns": [["id"], ["id"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["bannerid"], ["banner"], ["campaignid"], ["campaign"], ["countrycode"], ["rtype"], ["datetime"], ["referrerurl"], ["visitorid"], ["ip"], ["cdata1"], ["cdata2"]]
       }]
     });
 
