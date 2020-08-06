@@ -527,7 +527,7 @@ class PostAffiliatePro {
         "offset": offset,
         "limit": limit,
         "filters": filters,
-        "columns": [["id"], ["id"], ["commission"], ["totalcost"], ["t_orderid"], ["productid"], ["dateinserted"], ["name"], ["rtype"], ["tier"], ["commissionTypeName"], ["rstatus"], ["payoutstatus"], ["firstname"], ["lastname"], ["userid"], ["bannerid"], ["campaignid"], ["banner"], ["name"], ["data1"], ["data2"], ["data3"], ["data4"], ["data5"], ["userstatus"], ["actions"]]
+        "columns": [["id"], ["id"], ["commission"], ["totalcost"], ["t_orderid"], ["productid"], ["dateinserted"], ["name"], ["rtype"], ["tier"], ["commissionTypeName"], ["rstatus"], ["payoutstatus"], ["firstname"], ["lastname"], ["userid"], ["bannerid"], ["campaignid"], ["banner"], ["name"], ["data1"], ["data2"], ["data3"], ["data4"], ["data5"], ["firstclickdata1"], ["userstatus"], ["actions"]]
       }]
     });
     return transactions;
