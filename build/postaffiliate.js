@@ -87,6 +87,22 @@ class PostAffiliatePro {
     return response.data;
   }
 
+  async __getAPIG(data) {
+    if (!this.cookies) await this.__authentication();
+    data.S = this.session;
+    let bodyFormData = new _formData.default();
+    bodyFormData.append("D", JSON.stringify(data));
+    let response = await (0, _axios.default)({
+      method: "GET",
+      url: this.urlServer,
+      data: bodyFormData.getBuffer(),
+      headers: _objectSpread({
+        "Cookie": `A=${this.session}; ${this.cookies}`
+      }, bodyFormData.getHeaders())
+    });
+    return response.data;
+  }
+
   async __parseResult(result) {
     if (result.length > 0) {
       let returnData = [],
@@ -165,7 +181,14 @@ class PostAffiliatePro {
   }
 
   async commandResponse(data) {
-    return await this.__getAPI(data);
+    if (!this.cookies) await this.__authentication();
+    return await (0, _axios.default)({
+      method: "GET",
+      url: this.urlServer + "?C=Pap_Merchants_Payout_PayoutHistoryForm&M=downloadAsPdf&S=" + this.session + "&FormRequest=Y&invoiceId=" + data + "&FormResponse=Y",
+      headers: {
+        "Cookie": `A=${this.session}; ${this.cookies}`
+      }
+    });
   }
   /**
    *
@@ -552,19 +575,7 @@ class PostAffiliatePro {
   }
 
   async downloadInvoice(invoiceid) {
-    let invoice = await this.commandResponse({
-      "C": "Gpf_Rpc_Server",
-      "M": "run",
-      "requests": [{
-        "C": "Pap_Merchants_Payout_PayoutHistoryForm",
-        "M": "downloadAsPdf",
-        "invoiceId": invoiceid,
-        "FormResponse": "Y",
-        "FormRequest": "Y"
-      }]
-    }); // https://arya.postaffiliatepro.com/scripts/server.php?C=Pap_Merchants_Payout_PayoutHistoryForm&M=downloadAsPdf&S=v2tanoufspjxxkwrjkp0sca5wo8u6f46&FormRequest=Y&invoiceId=lxnh7b03&FormResponse=Y
-
-    return invoice;
+    return await this.commandResponse(invoiceid);
   }
   /**
    *
