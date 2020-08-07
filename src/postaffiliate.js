@@ -441,22 +441,26 @@ export default class PostAffiliatePro {
 
   /**
    *
-   * @param filters : []
+   * @param campaignid : string
    * @returns {Promise<*>}
    */
-  async campaignsInfos(filters) {
-    let infos = await this.command({
+  async campaignsInfos(campaignid) {
+    let filters = [["rstatus", "IN", "A"], ["rtype", "IN", "P"], ["campaignid", "E", campaignid]];
+    let campaigns = await this.command({
       "C": "Gpf_Rpc_Server",
       "M": "run",
       "requests": [{
-        "C": "Pap_Merchants_Campaign_CampaignsInfoData",
-        "M": "load",
-        //"filters": [["dateinserted","DP","TM"]]
+        "C": "Pap_Merchants_Campaign_CampaignsGrid",
+        "M": "getRows",
+        "offset": 0,
+        "limit": 0,
+        "sort_col": "rorder",
+        "sort_asc": true,
         "filters": filters
       }]
     });
 
-    return infos.data;
+    return campaigns;
   }
 
   /**
