@@ -185,7 +185,7 @@ class PostAffiliatePro {
     return await (0, _axios.default)({
       method: "GET",
       url: this.urlServer + "?C=Pap_Merchants_Payout_PayoutHistoryForm&M=downloadAsPdf&S=" + this.session + "&FormRequest=Y&invoiceId=" + data + "&FormResponse=Y",
-      responseType: 'blob',
+      responseType: "blob",
       headers: {
         "Cookie": `A=${this.session}; ${this.cookies}`
       }
