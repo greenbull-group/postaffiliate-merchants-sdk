@@ -1,10 +1,13 @@
-import PostAffiliatePro from "./postaffiliate";
+const postaffiliate = require("./index");
 
-const postaffiliatepro = new PostAffiliatePro("http://demo.postaffiliatepro.com/scripts/server.php", "http://demo.postaffiliatepro.com/merchants/login.php", "username", "password", [["roleType", "M"], ["language", "fr-FR"], ["isFromApi", "Y"], ["apiVersion", "5.9.19.3"]]);
+postaffiliate.setUrlServer("http://demo.postaffiliatepro.com/scripts/server.php");
+postaffiliate.setUrlLogin("http://demo.postaffiliatepro.com/merchants/login.php");
+postaffiliate.setUsername("username");
+postaffiliate.setPassword("password");
+postaffiliate.setOptions([["roleType", "M"], ["language", "fr-FR"], ["isFromApi", "Y"], ["apiVersion", "5.9.19.3"]]);
 
 (async () => {
   //Affiliates
-  let affiliates = await postaffiliatepro.affiliates(0, 100);
+  let affiliates = await postaffiliate.affiliates(0, 100);
   console.log(affiliates); // eslint-disable-line
-
 })();

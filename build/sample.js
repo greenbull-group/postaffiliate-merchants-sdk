@@ -1,6 +1,6 @@
 "use strict";
 
-var _postaffiliate = _interopRequireDefault(require("./postaffiliate"));
+var _postaffiliate = _interopRequireDefault(require("./class/postaffiliate"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 

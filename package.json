@@ -1,7 +1,7 @@
 {
   "name": "postaffiliate-merchants-sdk",
   "version": "1.0.0",
-  "main": "./build/postaffiliate.js",
+  "main": "./build/index.js",
   "author": "Greennbull",
   "license": "MIT",
   "scripts": {
