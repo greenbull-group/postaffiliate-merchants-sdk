@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/index.js"],"names":["postaffiliate","require","module","exports"],"mappings":";;AAAA,MAAMA,aAAa,GAAGC,OAAO,CAAC,iBAAD,CAA7B;;AAEAC,MAAM,CAACC,OAAP,GAAiBH,aAAjB","sourcesContent":["const postaffiliate = require(\"./postaffiliate\");\n\nmodule.exports = postaffiliate;"],"file":"index.js"}

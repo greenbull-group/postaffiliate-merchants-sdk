@@ -1,6 +1,6 @@
 "use strict";
 
-const PostAffiliatePro = require('./class/postaffiliate'); //Export singleton instance
+const PostAffiliatePro = require("./class/postaffiliate"); //Export singleton instance
 
 
 module.exports = new PostAffiliatePro();

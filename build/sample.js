@@ -1,14 +1,16 @@
 "use strict";
 
-var _postaffiliate = _interopRequireDefault(require("./class/postaffiliate"));
+const postaffiliate = require("./index");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-const postaffiliatepro = new _postaffiliate.default("http://demo.postaffiliatepro.com/scripts/server.php", "http://demo.postaffiliatepro.com/merchants/login.php", "username", "password", [["roleType", "M"], ["language", "fr-FR"], ["isFromApi", "Y"], ["apiVersion", "5.9.19.3"]]);
+postaffiliate.setUrlServer("http://demo.postaffiliatepro.com/scripts/server.php");
+postaffiliate.setUrlLogin("http://demo.postaffiliatepro.com/merchants/login.php");
+postaffiliate.setUsername("username");
+postaffiliate.setPassword("password");
+postaffiliate.setOptions([["roleType", "M"], ["language", "fr-FR"], ["isFromApi", "Y"], ["apiVersion", "5.9.19.3"]]);
 
 (async () => {
   //Affiliates
-  let affiliates = await postaffiliatepro.affiliates(0, 100);
+  let affiliates = await postaffiliate.affiliates(0, 100);
   console.log(affiliates); // eslint-disable-line
 })();
 //# sourceMappingURL=sample.js.map
