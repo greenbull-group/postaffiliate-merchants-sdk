@@ -329,6 +329,24 @@ class PostAffiliatePro {
     });
     return update;
   }
+
+  async updatePaymentAffiliate(affiliateid, paypalEmail, supportVAT, applyVatInvoicing, vatPercentage, vatNumber, amountOfRegCapital, regNumber) {
+    let params = [["name", "value"], ["Id", affiliateid], ["payoutoptionid", "8444af30"], ["pp_email", paypalEmail], ["support_vat", supportVAT ? "Y" : "N"], ["applyVatInvoicing", applyVatInvoicing ? "Y" : "N"]];
+    if (vatPercentage) params.push(["vatPercentage", vatPercentage]);
+    if (vatNumber) params.push(["vatNumber", vatNumber]);
+    if (amountOfRegCapital) params.push(["amountOfRegCapital", amountOfRegCapital]);
+    if (regNumber) params.push(["regNumber", regNumber]);
+    let update = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_User_AffiliateForm",
+        "M": "savePayouts",
+        "fields": params
+      }]
+    });
+    return update;
+  }
   /**
    *
    * @param status : A|D|P
