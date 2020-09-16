@@ -97,6 +97,8 @@ class PostAffiliatePro {
         "Cookie": `A=${this.session}; ${this.cookies}`
       }, bodyFormData.getHeaders())
     });
+    console.log(response); // eslint-disable-line
+
     return response.data;
   }
 

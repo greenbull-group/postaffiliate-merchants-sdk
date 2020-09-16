@@ -99,7 +99,7 @@ class PostAffiliatePro {
         ...bodyFormData.getHeaders()
       }
     });
-
+    console.log(response); // eslint-disable-line
     return response.data;
   }
 
