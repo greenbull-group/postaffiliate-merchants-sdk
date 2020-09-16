@@ -99,8 +99,19 @@ class PostAffiliatePro {
         ...bodyFormData.getHeaders()
       }
     });
-    console.log(response); // eslint-disable-line
+
+    if(this.__isSessionClosed(response)) {
+      this.cookies = null;
+      this.__getAPI(data);
+    }
     return response.data;
+  }
+
+  __isSessionClosed(response) {
+    if (response && response.data && response.data.e && response.data.e === "session_closed") {
+      return true;
+    }
+    return false;
   }
 
   async __getAPIG(data) {
