@@ -100,7 +100,7 @@ class PostAffiliatePro {
       }
     });
 
-    if(this.__isSessionClosed(response)) {
+    if (this.__isSessionClosed(response)) {
       this.cookies = null;
       this.__getAPI(data);
     }
@@ -632,6 +632,31 @@ class PostAffiliatePro {
         "columns": [["id"], ["id"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["bannerid"], ["banner"], ["campaignid"], ["campaign"], ["countrycode"], ["rtype"], ["datetime"], ["referrerurl"], ["destinationurl"], ["visitorid"], ["ip"], ["cdata1"], ["cdata2"]]
       }]
     });
+    let maxRecords = (clicks && clicks.data) ? clicks.data.length : 0;
+    let totalRecords = clicks.count;
+    if (limit === 0 && maxRecords > 0) {
+      let cycles = Math.ceil(totalRecords / maxRecords);
+      for (let i = 1; i < cycles; i++) {
+        let subitems = await this.command({
+          "C": "Gpf_Rpc_Server",
+          "M": "run",
+          "requests": [{
+            "C": "Pap_Merchants_Reports_ClicksGrid",
+            "M": "getRows",
+            "sort_col": "datetime",
+            "sort_asc": false,
+            "offset": (i * maxRecords),
+            "limit": maxRecords,
+            "filters": filters,
+            "columns": [["id"], ["id"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["bannerid"], ["banner"], ["campaignid"], ["campaign"], ["countrycode"], ["rtype"], ["datetime"], ["referrerurl"], ["destinationurl"], ["visitorid"], ["ip"], ["cdata1"], ["cdata2"]]
+          }]
+        });
+
+        if (subitems && subitems.data && subitems.data.length > 0) {
+          clicks.data = clicks.data.concat(subitems.data);
+        }
+      }
+    }
 
     return clicks;
   }
@@ -683,6 +708,32 @@ class PostAffiliatePro {
         "columns": [["id"], ["id"], ["commission"], ["totalcost"], ["t_orderid"], ["productid"], ["dateinserted"], ["name"], ["rtype"], ["tier"], ["commissionTypeName"], ["rstatus"], ["payoutstatus"], ["firstname"], ["lastname"], ["userid"], ["bannerid"], ["campaignid"], ["banner"], ["name"], ["data1"], ["data2"], ["data3"], ["data4"], ["data5"], ["originalcurrencyid"], ["original_currency_code"], ["originalcurrencyrate"], ["originalcurrencyvalue"], ["firstclickdata1"], ["userstatus"], ["actions"]]
       }]
     });
+
+    let maxRecords = (transactions && transactions.data) ? transactions.data.length : 0;
+    let totalRecords = transactions.count;
+    if (limit === 0 && maxRecords > 0) {
+      let cycles = Math.ceil(totalRecords / maxRecords);
+      for (let i = 1; i < cycles; i++) {
+        let subitems = await this.command({
+          "C": "Gpf_Rpc_Server",
+          "M": "run",
+          "requests": [{
+            "C": "Pap_Merchants_Transaction_TransactionsGrid",
+            "M": "getRows",
+            "sort_col": "dateinserted",
+            "sort_asc": false,
+            "offset": (i * maxRecords),
+            "limit": maxRecords,
+            "filters": filters,
+            "columns": [["id"], ["id"], ["commission"], ["totalcost"], ["t_orderid"], ["productid"], ["dateinserted"], ["name"], ["rtype"], ["tier"], ["commissionTypeName"], ["rstatus"], ["payoutstatus"], ["firstname"], ["lastname"], ["userid"], ["bannerid"], ["campaignid"], ["banner"], ["name"], ["data1"], ["data2"], ["data3"], ["data4"], ["data5"], ["originalcurrencyid"], ["original_currency_code"], ["originalcurrencyrate"], ["originalcurrencyvalue"], ["firstclickdata1"], ["userstatus"], ["actions"]]
+          }]
+        });
+
+        if (subitems && subitems.data && subitems.data.length > 0) {
+          transactions.data = transactions.data.concat(subitems.data);
+        }
+      }
+    }
 
     return transactions;
   }
