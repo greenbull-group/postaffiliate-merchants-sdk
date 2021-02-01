@@ -410,6 +410,36 @@ class PostAffiliatePro {
 
 
   async campaigns(category, offset, limit) {
+    let filters = [["rstatus", "IN", "A"], ["rtype", "IN", "P"]];
+
+    if (category) {
+      filters.push(["campaigncategoryid", "IN", category]);
+    }
+
+    let campaigns = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_Campaign_CampaignsGrid",
+        "M": "getRows",
+        "offset": offset,
+        "limit": limit,
+        "sort_col": "rorder",
+        "sort_asc": true,
+        "filters": filters
+      }]
+    });
+    return campaigns;
+  }
+  /**
+   * @param category: string|null
+   * @param offset
+   * @param limit
+   * @returns {Promise<*>}
+   */
+
+
+  async allCampaigns(category, offset, limit) {
     let filters = [["rstatus", "IN", "A"], ["rtype", "IN", "P,I"]];
 
     if (category) {
@@ -429,6 +459,39 @@ class PostAffiliatePro {
         "filters": filters
       }]
     });
+    return campaigns;
+  }
+  /**
+   *
+   * @param category
+   * @param username
+   * @param offset
+   * @param limit
+   * @returns {Promise<void>}
+   */
+
+
+  async filtredCampains(category, username, offset, limit) {
+    let campaigns = await this.allCampaigns(category, offset, limit);
+
+    if (campaigns && campaigns.data) {
+      let results = [];
+
+      for (let c of campaigns.data) {
+        if (c.rtype === "P") {
+          results.push(c);
+        } else if (c.rtype === "I") {
+          let canSeeCampaign = await this.canSeePrivateCampaign(username, c.campaignid);
+          if (canSeeCampaign) results.push(c);
+        }
+      }
+
+      return {
+        data: results,
+        count: results.length
+      };
+    }
+
     return campaigns;
   }
   /**
@@ -455,6 +518,37 @@ class PostAffiliatePro {
       }]
     });
     return campaigns.count && campaigns.count === 1 ? true : false;
+  }
+  /**
+   * @param username : string
+   * @param campaignid : string
+   * @returns {Promise<*>}
+   */
+
+
+  async canSeePrivateCampaigns(username, campaignIds) {
+    let filters = [["rstatus", "IN", "A"], ["username", "E", username]];
+    let requests = [];
+
+    for (let c of campaignIds) {
+      requests.push({
+        "C": "Pap_Features_Common_AffiliateGroupGrid",
+        "M": "getRows",
+        "offset": 0,
+        "limit": 1,
+        "sort_col": "username",
+        "sort_asc": true,
+        "campaignid": c,
+        "filters": filters
+      });
+    }
+
+    let campaigns = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": requests
+    });
+    return campaigns;
   }
   /**
    *
