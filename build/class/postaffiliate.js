@@ -410,7 +410,7 @@ class PostAffiliatePro {
 
 
   async campaigns(category, offset, limit) {
-    let filters = [["rstatus", "IN", "A"], ["rtype", "IN", "P"]];
+    let filters = [["rstatus", "IN", "A"], ["rtype", "IN", "P,I"]];
 
     if (category) {
       filters.push(["campaigncategoryid", "IN", category]);
@@ -432,6 +432,31 @@ class PostAffiliatePro {
     return campaigns;
   }
   /**
+   * @param username : string
+   * @param campaignid : string
+   * @returns {Promise<*>}
+   */
+
+
+  async canSeePrivateCampaign(username, campaignid) {
+    let filters = [["rstatus", "IN", "A"], ["username", "E", username], ["campaignid", "E", campaignid]];
+    let campaigns = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Features_Common_AffiliateGroupGrid",
+        "M": "getRows",
+        "offset": 0,
+        "limit": 1,
+        "sort_col": "username",
+        "sort_asc": true,
+        "campaignid": campaignid,
+        "filters": filters
+      }]
+    });
+    return campaigns.count && campaigns.count === 1 ? true : false;
+  }
+  /**
    *
    * @param campaignid : string
    * @returns {Promise<*>}
@@ -439,7 +464,7 @@ class PostAffiliatePro {
 
 
   async campaignsInfos(campaignid) {
-    let filters = [["rstatus", "IN", "A"], ["rtype", "IN", "P"], ["campaignid", "E", campaignid]];
+    let filters = [["rstatus", "IN", "A"], ["rtype", "IN", "P,I"], ["campaignid", "E", campaignid]];
     let campaigns = await this.command({
       "C": "Gpf_Rpc_Server",
       "M": "run",
