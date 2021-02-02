@@ -510,6 +510,34 @@ class PostAffiliatePro {
    * @param limit
    * @returns {Promise<*>}
    */
+  async privateCampaigns(category, offset, limit) {
+    let filters = [["rstatus", "IN", "A"], ["rtype", "IN", "I"]];
+    if (category) {
+      filters.push(["campaigncategoryid", "IN", category]);
+    }
+    let campaigns = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_Campaign_CampaignsGrid",
+        "M": "getRows",
+        "offset": offset,
+        "limit": limit,
+        "sort_col": "rorder",
+        "sort_asc": true,
+        "filters": filters
+      }]
+    });
+
+    return campaigns;
+  }
+
+  /**
+   * @param category: string|null
+   * @param offset
+   * @param limit
+   * @returns {Promise<*>}
+   */
   async allCampaigns(category, offset, limit) {
     let filters = [["rstatus", "IN", "A"], ["rtype", "IN", "P,I"]];
     if (category) {
@@ -541,7 +569,7 @@ class PostAffiliatePro {
    * @returns {Promise<void>}
    */
   async filtredCampains(category, username, offset, limit) {
-    let campaigns = await this.allCampaigns(category, offset, limit);
+    let campaigns = await this.privateCampaigns(category, offset, limit);
     if(campaigns && campaigns.data) {
       let results = [];
       for(let c of campaigns.data) {
