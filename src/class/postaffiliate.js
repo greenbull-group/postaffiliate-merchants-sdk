@@ -405,16 +405,34 @@ class PostAffiliatePro {
     return update;
   }
 
-  async updatePaymentAffiliate(affiliateid, paypalEmail, supportVAT, applyVatInvoicing, vatPercentage, vatNumber, amountOfRegCapital, regNumber) {
-
+  /**
+   *
+   * @param affiliateid : string
+   * @param paymentMethod : string
+   * @param paypalEmail : string
+   * @param supportVAT : boolean
+   * @param applyVatInvoicing : boolean
+   * @param vatPercentage
+   * @param vatNumber
+   * @param amountOfRegCapital
+   * @param regNumber
+   * @returns {Promise<any>}
+   */
+  async updatePaymentAffiliate(affiliateid, paymentMethod, paypalEmail, supportVAT, applyVatInvoicing, vatPercentage, vatNumber, amountOfRegCapital, regNumber) {
     let params = [
       ["name", "value"],
       ["Id", affiliateid],
-      ["payoutoptionid", "8444af30"],
-      ["pp_email", paypalEmail],
+      //["payoutoptionid", "8444af30"],
+      //["pp_email", paypalEmail],
       ["support_vat", (supportVAT) ? "Y" : "N"],
       ["applyVatInvoicing", (applyVatInvoicing) ? "Y" : "N"],
     ];
+    if(paymentMethod) {
+      params.push(["payoutoptionid", paymentMethod]);
+      if(paymentMethod === "8444af30") {
+        params.push(["pp_email", paypalEmail]);
+      }
+    }
     if (vatPercentage)
       params.push(["vatPercentage", vatPercentage]);
     if (vatNumber)
