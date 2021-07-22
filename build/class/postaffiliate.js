@@ -365,7 +365,7 @@ class PostAffiliatePro {
     if (paymentMethod) {
       params.push(["payoutoptionid", paymentMethod]);
 
-      if (paymentMethod === '8444af30') {
+      if (paymentMethod === "8444af30") {
         params.push(["pp_email", paypalEmail]);
       }
     }
@@ -925,6 +925,33 @@ class PostAffiliatePro {
       }]
     });
     return report;
+  }
+
+  async getTransactionsByOrderId(orderId) {
+    let transactions = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_Transaction_TransactionsGrid",
+        "M": "getRows",
+        "filters": [["rtype", "IN", "S"], ["orderId", "L", orderId]]
+      }]
+    });
+    return transactions;
+  }
+
+  async refundTransactionByOrderId(orderId) {
+    let refund = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_Transaction_TransactionsForm",
+        "M": "makeRefundChargebackByParams",
+        "filters": [["orderId", "E", orderId]],
+        "status": "R"
+      }]
+    });
+    return refund;
   }
 
 } //Export class
