@@ -290,7 +290,7 @@ class PostAffiliatePro {
    * @param fax : string|null
    * @returns {Promise<*>}
    */
-  async addAffiliate(email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax) {
+  async addAffiliate(email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax, cgv) {
     let params = [
       ["name", "value"],
       ["Id", ""],
@@ -334,6 +334,8 @@ class PostAffiliatePro {
       params.push(["data9", fax]);
     if (managername)
       params.push(["data10", managername]);
+    if (cgv) // Y or N
+      params.push(["data11", cgv]);
 
     let add = await this.command({
       "C": "Gpf_Rpc_Server",
@@ -347,7 +349,7 @@ class PostAffiliatePro {
     return add;
   }
 
-  async updateAffiliate(affiliateid, email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax) {
+  async updateAffiliate(affiliateid, email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax, cgv) {
     let params = [
       ["name", "value"],
       ["Id", affiliateid],
@@ -392,6 +394,8 @@ class PostAffiliatePro {
       params.push(["data9", fax]);
     if (managername)
       params.push(["data10", managername]);
+    if (cgv) // Y or N
+      params.push(["data11", cgv]);
     let update = await this.command({
       "C": "Gpf_Rpc_Server",
       "M": "run",
@@ -403,6 +407,29 @@ class PostAffiliatePro {
     });
 
     return update;
+  }
+
+  async hasAcceptedCGV(affiliateid) {
+    let params = [
+      ["name", "value"],
+      ["Id", affiliateid]
+    ];
+    const affiliate = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_User_AffiliateForm",
+        "M": "load",
+        "fields": params
+      }]
+    });
+    if (affiliate && affiliate.fields && affiliate.fields.length > 0) {
+      const cgv = affiliate.fields.find(f => f.name === "data11");
+      if (cgv && cgv.value && cgv.value === "Y")
+        return true;
+      return false;
+    }
+    return false;
   }
 
   /**
