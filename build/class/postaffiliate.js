@@ -284,7 +284,7 @@ class PostAffiliatePro {
    */
 
 
-  async addAffiliate(email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax, cgv) {
+  async addAffiliate(email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax, cgv, ppd) {
     let params = [["name", "value"], ["Id", ""], ["username", email], ["rpassword", password], ["customTimezone", ""], ["useCustomTimezone", "N"], ["lang", ""], ["photo", ""], ["note", ""], ["dontSendEmail", "Y"], ["createSignupReferralComm", "N"]];
     if (firstname) params.push(["firstname", firstname]);
     if (lastname) params.push(["lastname", lastname]);
@@ -303,6 +303,8 @@ class PostAffiliatePro {
     if (managername) params.push(["data10", managername]);
     if (cgv) // Y or N
       params.push(["data11", cgv]);
+    if (ppd) // Y or N
+      params.push(["data12", ppd]);
     let add = await this.command({
       "C": "Gpf_Rpc_Server",
       "M": "run",
@@ -315,7 +317,7 @@ class PostAffiliatePro {
     return add;
   }
 
-  async updateAffiliate(affiliateid, email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax, cgv) {
+  async updateAffiliate(affiliateid, email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax, cgv, ppd) {
     let params = [["name", "value"], ["Id", affiliateid], ["username", email], ["customTimezone", ""], ["useCustomTimezone", "N"], ["lang", ""], ["photo", ""], ["note", ""], ["dontSendEmail", "Y"], ["createSignupReferralComm", "N"]];
     if (password) params.push(["rpassword", password]);
     if (firstname) params.push(["firstname", firstname]);
@@ -335,6 +337,8 @@ class PostAffiliatePro {
     if (managername) params.push(["data10", managername]);
     if (cgv) // Y or N
       params.push(["data11", cgv]);
+    if (ppd) // Y or N
+      params.push(["data12", cgv]);
     let update = await this.command({
       "C": "Gpf_Rpc_Server",
       "M": "run",
