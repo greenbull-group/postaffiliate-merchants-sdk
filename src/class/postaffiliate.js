@@ -290,7 +290,7 @@ class PostAffiliatePro {
    * @param fax : string|null
    * @returns {Promise<*>}
    */
-  async addAffiliate(email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax, cgv) {
+  async addAffiliate(email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax, cgv, ppd) {
     let params = [
       ["name", "value"],
       ["Id", ""],
@@ -336,6 +336,8 @@ class PostAffiliatePro {
       params.push(["data10", managername]);
     if (cgv) // Y or N
       params.push(["data11", cgv]);
+    if (ppd) // Y or N
+      params.push(["data12", ppd]);
 
     let add = await this.command({
       "C": "Gpf_Rpc_Server",
@@ -349,7 +351,7 @@ class PostAffiliatePro {
     return add;
   }
 
-  async updateAffiliate(affiliateid, email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax, cgv) {
+  async updateAffiliate(affiliateid, email, password, firstname, lastname, status, parentuserid, managername, refid, company, address, street, city, state, country, postalcode, phonenumber, fax, cgv, ppd) {
     let params = [
       ["name", "value"],
       ["Id", affiliateid],
@@ -396,6 +398,8 @@ class PostAffiliatePro {
       params.push(["data10", managername]);
     if (cgv) // Y or N
       params.push(["data11", cgv]);
+    if (ppd) // Y or N
+      params.push(["data12", cgv]);
     let update = await this.command({
       "C": "Gpf_Rpc_Server",
       "M": "run",
