@@ -944,6 +944,25 @@ class PostAffiliatePro {
     return invoices;
   }
 
+  async invoicesV2(affiliateid, offset, limit) {
+    let invoices = await this.command({
+      "C": "Gpf_Rpc_Server",
+      "M": "run",
+      "requests": [{
+        "C": "Pap_Merchants_Payout_PayAffiliatesGrid",
+        "M": "getRows",
+        "sort_col": "dateinserted",
+        "sort_asc": true,
+        "offset": offset,
+        "limit": limit,
+        "filters": [["userid", "E", affiliateid]],
+        "columns": [["id"], ["id"], ["payouthistoryid"], ["dateinserted"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["amount"], ["affiliatenote"], ["actions"]]
+      }]
+    });
+
+    return invoices;
+  }
+
   async downloadInvoice(invoiceid) {
     return await this.commandResponse(invoiceid);
   }
