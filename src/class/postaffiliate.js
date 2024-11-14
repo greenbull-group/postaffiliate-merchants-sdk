@@ -789,7 +789,7 @@ class PostAffiliatePro {
    * @param limit : int
    * @returns {Promise<*>}
    */
-  async reportClicks(campaignid, affiliateid, bannerid, type, datestart, dateend, offset, limit) {
+  async reportClicks(campaignid, affiliateid, bannerid, type, datestart, dateend, offset, limit, last_id) {
     let filters = [];
     if (campaignid)
       filters.push(["campaignid", "E", campaignid]);
@@ -805,19 +805,23 @@ class PostAffiliatePro {
       filters.push(["datetime", "D<=", dateend]);
     }
 
+    let requestParams = {
+      "C": "Pap_Merchants_Reports_ClicksGrid",
+      "M": "getRows",
+      "sort_col": "datetime",
+      "sort_asc": false,
+      "offset": offset,
+      "limit": limit,
+      "filters": filters,
+      "columns": [["id"], ["id"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["bannerid"], ["banner"], ["campaignid"], ["campaign"], ["countrycode"], ["rtype"], ["datetime"], ["referrerurl"], ["destinationurl"], ["visitorid"], ["ip"], ["cdata1"], ["cdata2"]]
+    };
+    if (last_id !== null && last_id !== undefined) {
+      requestParams["last_id"] = last_id;
+    }
     let clicks = await this.command({
       "C": "Gpf_Rpc_Server",
       "M": "run",
-      "requests": [{
-        "C": "Pap_Merchants_Reports_ClicksGrid",
-        "M": "getRows",
-        "sort_col": "datetime",
-        "sort_asc": false,
-        "offset": offset,
-        "limit": limit,
-        "filters": filters,
-        "columns": [["id"], ["id"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["bannerid"], ["banner"], ["campaignid"], ["campaign"], ["countrycode"], ["rtype"], ["datetime"], ["referrerurl"], ["destinationurl"], ["visitorid"], ["ip"], ["cdata1"], ["cdata2"]]
-      }]
+      "requests": [requestParams]
     });
     let maxRecords = (clicks && clicks.data) ? clicks.data.length : 0;
     let totalRecords = clicks.count;
@@ -951,8 +955,6 @@ class PostAffiliatePro {
       "requests": [{
         "C": "Pap_Merchants_Payout_PayAffiliatesGrid",
         "M": "getRows",
-        "sort_col": "dateinserted",
-        "sort_asc": true,
         "offset": offset,
         "limit": limit,
         "filters": [["userid", "E", affiliateid]],
