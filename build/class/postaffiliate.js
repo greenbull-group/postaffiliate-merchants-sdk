@@ -810,7 +810,7 @@ class PostAffiliatePro {
    */
 
 
-  async reportTransactions(campaignid, affiliateid, bannerid, type, payoutstatus, visitorid, datestart, dateend, offset, limit) {
+  async reportTransactions(campaignid, affiliateid, bannerid, type, payoutstatus, visitorid, datestart, dateend, offset, limit, last_id) {
     let filters = [];
     if (campaignid) filters.push(["campaignid", "E", campaignid]);
     if (affiliateid) filters.push(["userid", "E", affiliateid]);
@@ -827,19 +827,25 @@ class PostAffiliatePro {
       filters.push(["dateinserted", "D<=", dateend]);
     }
 
+    let requestParams = {
+      "C": "Pap_Merchants_Transaction_TransactionsGrid",
+      "M": "getRows",
+      "sort_col": "dateinserted",
+      "sort_asc": false,
+      "offset": offset,
+      "limit": limit,
+      "filters": filters,
+      "columns": [["id"], ["id"], ["commission"], ["totalcost"], ["t_orderid"], ["productid"], ["dateinserted"], ["name"], ["rtype"], ["tier"], ["commissionTypeName"], ["rstatus"], ["payoutstatus"], ["firstname"], ["lastname"], ["userid"], ["bannerid"], ["campaignid"], ["banner"], ["name"], ["data1"], ["data2"], ["data3"], ["data4"], ["data5"], ["originalcurrencyid"], ["original_currency_code"], ["originalcurrencyrate"], ["originalcurrencyvalue"], ["firstclickdata1"], ["userstatus"], ["actions"]]
+    };
+
+    if (last_id !== null && last_id !== undefined) {
+      requestParams["last_id"] = last_id;
+    }
+
     let transactions = await this.command({
       "C": "Gpf_Rpc_Server",
       "M": "run",
-      "requests": [{
-        "C": "Pap_Merchants_Transaction_TransactionsGrid",
-        "M": "getRows",
-        "sort_col": "dateinserted",
-        "sort_asc": false,
-        "offset": offset,
-        "limit": limit,
-        "filters": filters,
-        "columns": [["id"], ["id"], ["commission"], ["totalcost"], ["t_orderid"], ["productid"], ["dateinserted"], ["name"], ["rtype"], ["tier"], ["commissionTypeName"], ["rstatus"], ["payoutstatus"], ["firstname"], ["lastname"], ["userid"], ["bannerid"], ["campaignid"], ["banner"], ["name"], ["data1"], ["data2"], ["data3"], ["data4"], ["data5"], ["originalcurrencyid"], ["original_currency_code"], ["originalcurrencyrate"], ["originalcurrencyvalue"], ["firstclickdata1"], ["userstatus"], ["actions"]]
-      }]
+      "requests": [requestParams]
     });
     let maxRecords = transactions && transactions.data ? transactions.data.length : 0;
     let totalRecords = transactions.count;
