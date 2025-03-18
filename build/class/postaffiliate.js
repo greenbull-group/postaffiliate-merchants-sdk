@@ -109,16 +109,16 @@ class PostAffiliatePro {
     data.S = this.session; // Générer une clé de cache unique basée sur la requête
 
     const cacheKey = JSON.stringify(data);
-    console.log("cacheKey", cacheKey); // eslint-disable-line
-
     const cachedResult = cache.get(cacheKey);
 
     if (cachedResult) {
       console.log("result is cached", cachedResult); // eslint-disable-line
 
       return cachedResult;
-    } // Ajouter la requête à la file d'attente
+    }
 
+    console.log("no cache, adding to queue", cacheKey); // eslint-disable-line
+    // Ajouter la requête à la file d'attente
 
     return queue.add(async () => {
       let bodyFormData = new FormData();
@@ -149,9 +149,8 @@ class PostAffiliatePro {
         return response.data;
       } catch (error) {
         if (error.response && error.response.status === 429 && retryCount < 3) {
-          console.log("retrying __getAPI", retryCount); // eslint-disable-line
+          console.log("retrying __getAPI", retryCount, error.response.status); // eslint-disable-line
 
-          await new Promise(resolve => setTimeout(resolve, 1000));
           return this.__getAPI(data, retryCount + 1);
         }
       }
