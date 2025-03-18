@@ -95,13 +95,14 @@ class PostAffiliatePro {
     data.S = this.session;
     
     // Générer une clé de cache unique basée sur la requête
-    const cacheKey = JSON.stringify(data);
+    const cacheKey = this.__generateCacheKey(data);
     const cachedResult = cache.get(cacheKey);
     if (cachedResult) {
-      console.log("result is cached", retryCount, cachedResult); // eslint-disable-line
+      console.log("result is cached", retryCount, cacheKey);// eslint-disable-line
       return cachedResult;
     }
-    console.log("no cache, adding to queue", retryCount, cacheKey); // eslint-disable-line
+    
+    console.log("no cache, adding to queue", retryCount, cacheKey);// eslint-disable-line
     // Ajouter la requête à la file d'attente
     return queue.add(async () => {
       let bodyFormData = new FormData();
@@ -141,6 +142,35 @@ class PostAffiliatePro {
         return null;
       }
     });
+  }
+
+  __generateCacheKey(data) {
+    if (!data.requests || !data.requests[0]) {
+      return JSON.stringify(data);
+    }
+
+    const request = data.requests[0];
+    let key = [request.C, request.M];
+
+    // Ajouter les paramètres de tri si présents
+    if (request.sort_col) {
+      key.push(request.sort_col);
+    }
+    
+    // Ajouter la limite si présente
+    if (request.limit !== undefined) {
+      key.push(request.limit);
+    }
+
+    // Ajouter les filtres si présents
+    if (request.filters) {
+      request.filters.forEach(filter => {
+        key.push(...filter);
+      });
+    }
+
+    // Retourner la clé formatée
+    return key.join("_");
   }
 
   __isSessionClosed(response) {

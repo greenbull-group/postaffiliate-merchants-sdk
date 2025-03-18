@@ -108,11 +108,12 @@ class PostAffiliatePro {
 
     data.S = this.session; // Générer une clé de cache unique basée sur la requête
 
-    const cacheKey = JSON.stringify(data);
+    const cacheKey = this.__generateCacheKey(data);
+
     const cachedResult = cache.get(cacheKey);
 
     if (cachedResult) {
-      console.log("result is cached", retryCount, cachedResult); // eslint-disable-line
+      console.log("result is cached", retryCount, cacheKey); // eslint-disable-line
 
       return cachedResult;
     }
@@ -136,6 +137,8 @@ class PostAffiliatePro {
 
         if (this.__isSessionClosed(response)) {
           this.cookies = null;
+          console.log("session closed, retrying", retryCount); // eslint-disable-line
+
           return await this.__getAPI(data, retryCount);
         } // Mettre en cache le résultat
 
@@ -150,10 +153,10 @@ class PostAffiliatePro {
 
         return response.data;
       } catch (error) {
-        if (error.response && error.response.status === 429 && retryCount < 3) {
-          console.log("retrying __getAPI", retryCount, error.response.status); // eslint-disable-line
+        if (error.response && error.response.status === 429) {
+          console.log("error 429, we throw an error", error.response.status); // eslint-disable-line
 
-          return await this.__getAPI(data, retryCount + 1);
+          throw error;
         }
 
         console.log('not 429 or retry exceeded', retryCount, error.response.status); // eslint-disable-line
@@ -161,6 +164,34 @@ class PostAffiliatePro {
         return null;
       }
     });
+  }
+
+  __generateCacheKey(data) {
+    if (!data.requests || !data.requests[0]) {
+      return JSON.stringify(data);
+    }
+
+    const request = data.requests[0];
+    let key = [request.C, request.M]; // Ajouter les paramètres de tri si présents
+
+    if (request.sort_col) {
+      key.push(request.sort_col);
+    } // Ajouter la limite si présente
+
+
+    if (request.limit !== undefined) {
+      key.push(request.limit);
+    } // Ajouter les filtres si présents
+
+
+    if (request.filters) {
+      request.filters.forEach(filter => {
+        key.push(...filter);
+      });
+    } // Retourner la clé formatée
+
+
+    return key.join("_");
   }
 
   __isSessionClosed(response) {
