@@ -9,7 +9,7 @@ const {default: PQueue} = require("p-queue");
 
 // Cache configuration
 const cache = new NodeCache({ stdTTL: 300 }); // 5 minutes TTL par défaut
-const queue = new PQueue({ concurrency: 1, interval: 1000 }); // 1 requête par seconde
+const queue = new PQueue({ concurrency: 1, interval: 1000, timeout: 20000 }); // 1 requête par seconde
 
 class PostAffiliatePro {
 
@@ -87,7 +87,7 @@ class PostAffiliatePro {
     return true;
   }
 
-  async __getAPI(data) {
+  async __getAPI(data, retryCount = 0) {
     if (!this.cookies)
       await this.__authentication();
 
@@ -95,8 +95,10 @@ class PostAffiliatePro {
     
     // Générer une clé de cache unique basée sur la requête
     const cacheKey = JSON.stringify(data);
+    console.log("cacheKey", cacheKey); // eslint-disable-line
     const cachedResult = cache.get(cacheKey);
     if (cachedResult) {
+      console.log("result is cached", cachedResult); // eslint-disable-line
       return cachedResult;
     }
     // Ajouter la requête à la file d'attente
@@ -117,19 +119,20 @@ class PostAffiliatePro {
 
         if (this.__isSessionClosed(response)) {
           this.cookies = null;
-          return this.__getAPI(data);
+          return this.__getAPI(data, retryCount);
         }
 
         // Mettre en cache le résultat
         if (response.data && !response.data.e) {
           cache.set(cacheKey, response.data);
         }
+        console.log("setting cache and returning response.data", response.data); // eslint-disable-line
         return response.data;
       } catch (error) {
-        if (error.response && error.response.status === 429) {
-          // En cas d'erreur 429, réessayer après un délai
+        if (error.response && error.response.status === 429 && retryCount < 3) {
+          console.log("retrying __getAPI", retryCount); // eslint-disable-line
           await new Promise(resolve => setTimeout(resolve, 1000));
-          return this.__getAPI(data);
+          return this.__getAPI(data, retryCount + 1);
         }
         throw error;
       }
