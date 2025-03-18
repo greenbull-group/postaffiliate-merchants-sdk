@@ -113,12 +113,12 @@ class PostAffiliatePro {
     const cachedResult = cache.get(cacheKey);
 
     if (cachedResult) {
-      console.log("result is cached", retryCount, cacheKey); // eslint-disable-line
+      console.log("--> result is cached", retryCount, cacheKey); // eslint-disable-line
 
       return cachedResult;
     }
 
-    console.log("no cache, adding to queue", retryCount, cacheKey); // eslint-disable-line
+    console.log("--> no cache, adding to queue", retryCount, cacheKey); // eslint-disable-line
     // Ajouter la requête à la file d'attente
 
     return queue.add(async () => {
@@ -137,7 +137,7 @@ class PostAffiliatePro {
 
         if (this.__isSessionClosed(response)) {
           this.cookies = null;
-          console.log("session closed, retrying", retryCount); // eslint-disable-line
+          console.log("--> session closed, retrying", retryCount); // eslint-disable-line
 
           return await this.__getAPI(data, retryCount);
         } // Mettre en cache le résultat
@@ -149,17 +149,17 @@ class PostAffiliatePro {
           }
         }
 
-        console.log("setting cache and returning response.data", retryCount, response.data); // eslint-disable-line
+        console.log("--> setting cache and returning response.data", retryCount, response.data.count); // eslint-disable-line
 
         return response.data;
       } catch (error) {
         if (error.response && error.response.status === 429) {
-          console.log("error 429, we throw an error", error.response.status); // eslint-disable-line
+          console.log("--> error 429, we throw an error", error.response.status); // eslint-disable-line
 
           throw error;
         }
 
-        console.log('not 429 or retry exceeded', retryCount, error.response.status); // eslint-disable-line
+        console.log('--> not 429 or retry exceeded', retryCount, error.response.status); // eslint-disable-line
 
         return null;
       }
