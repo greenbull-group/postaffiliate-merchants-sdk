@@ -120,7 +120,7 @@ class PostAffiliatePro {
 
         if (this.__isSessionClosed(response)) {
           this.cookies = null;
-          return this.__getAPI(data, retryCount);
+          return await this.__getAPI(data, retryCount);
         }
         
         // Mettre en cache le résultat
@@ -134,7 +134,7 @@ class PostAffiliatePro {
       } catch (error) {
         if (error.response && error.response.status === 429 && retryCount < 3) {
           console.log("retrying __getAPI", retryCount, error.response.status); // eslint-disable-line
-          return this.__getAPI(data, retryCount + 1);
+          return await this.__getAPI(data, retryCount + 1);
         }
         console.log('not 429 or retry exceeded', retryCount, error.response.status); // eslint-disable-line
         return null;
