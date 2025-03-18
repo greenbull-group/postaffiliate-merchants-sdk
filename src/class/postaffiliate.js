@@ -114,10 +114,10 @@ class PostAffiliatePro {
       return response.data;
     } catch (error) {
       if (error.response && error.response.status === 429) {
-        console.log("--> error 429, we throw an error", error.response.status); // eslint-disable-line
+        console.log("--> error too many requests", error.response.status); // eslint-disable-line
       }
-      console.log('--> not 429 or retry exceeded', error.response.status); // eslint-disable-line
-      return null;
+      console.log('--> error postaffiliate', error.response.status, error.response.message); // eslint-disable-line
+      return [];
     }
   }
 
