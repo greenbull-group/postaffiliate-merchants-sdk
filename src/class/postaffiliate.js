@@ -9,7 +9,7 @@ const {default: PQueue} = require("p-queue");
 
 // Cache configuration
 const cache = new NodeCache({ stdTTL: 300 }); // 5 minutes TTL par défaut
-const queue = new PQueue({ concurrency: 1, interval: 1000, timeout: 20000 }); // 1 requête par seconde
+const queue = new PQueue({ concurrency: 1, interval: 1000, timeout: 20000 });
 
 class PostAffiliatePro {
 
@@ -98,10 +98,10 @@ class PostAffiliatePro {
     const cacheKey = JSON.stringify(data);
     const cachedResult = cache.get(cacheKey);
     if (cachedResult) {
-      console.log("result is cached", cachedResult); // eslint-disable-line
+      console.log("result is cached", retryCount, cachedResult); // eslint-disable-line
       return cachedResult;
     }
-    console.log("no cache, adding to queue", cacheKey); // eslint-disable-line
+    console.log("no cache, adding to queue", retryCount, cacheKey); // eslint-disable-line
     // Ajouter la requête à la file d'attente
     return queue.add(async () => {
       let bodyFormData = new FormData();
@@ -125,15 +125,19 @@ class PostAffiliatePro {
         
         // Mettre en cache le résultat
         if (response.data && !response.data.e) {
-          cache.set(cacheKey, response.data);
+          if (response.data.count > 0) {
+            cache.set(cacheKey, response.data);
+          }
         }
-        console.log("setting cache and returning response.data", response.data); // eslint-disable-line
+        console.log("setting cache and returning response.data", retryCount, response.data); // eslint-disable-line
         return response.data;
       } catch (error) {
         if (error.response && error.response.status === 429 && retryCount < 3) {
           console.log("retrying __getAPI", retryCount, error.response.status); // eslint-disable-line
           return this.__getAPI(data, retryCount + 1);
         }
+        console.log('not 429 or retry exceeded', retryCount, error.response.status); // eslint-disable-line
+        return null;
       }
     });
   }

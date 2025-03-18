@@ -28,7 +28,7 @@ const queue = new PQueue({
   concurrency: 1,
   interval: 1000,
   timeout: 20000
-}); // 1 requête par seconde
+});
 
 class PostAffiliatePro {
   /**
@@ -112,12 +112,12 @@ class PostAffiliatePro {
     const cachedResult = cache.get(cacheKey);
 
     if (cachedResult) {
-      console.log("result is cached", cachedResult); // eslint-disable-line
+      console.log("result is cached", retryCount, cachedResult); // eslint-disable-line
 
       return cachedResult;
     }
 
-    console.log("no cache, adding to queue", cacheKey); // eslint-disable-line
+    console.log("no cache, adding to queue", retryCount, cacheKey); // eslint-disable-line
     // Ajouter la requête à la file d'attente
 
     return queue.add(async () => {
@@ -141,10 +141,12 @@ class PostAffiliatePro {
 
 
         if (response.data && !response.data.e) {
-          cache.set(cacheKey, response.data);
+          if (response.data.count > 0) {
+            cache.set(cacheKey, response.data);
+          }
         }
 
-        console.log("setting cache and returning response.data", response.data); // eslint-disable-line
+        console.log("setting cache and returning response.data", retryCount, response.data); // eslint-disable-line
 
         return response.data;
       } catch (error) {
@@ -153,6 +155,10 @@ class PostAffiliatePro {
 
           return this.__getAPI(data, retryCount + 1);
         }
+
+        console.log('not 429 or retry exceeded', retryCount, error.response.status); // eslint-disable-line
+
+        return null;
       }
     });
   }
