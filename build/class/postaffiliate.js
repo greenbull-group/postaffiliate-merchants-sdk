@@ -13,6 +13,22 @@ const axios = require("axios").default;
 
 const FormData = require("form-data");
 
+const NodeCache = require("node-cache");
+
+const {
+  default: PQueue
+} = require("p-queue"); // Cache configuration
+
+
+const cache = new NodeCache({
+  stdTTL: 300
+}); // 5 minutes TTL par défaut
+
+const queue = new PQueue({
+  concurrency: 1,
+  interval: 1000
+}); // 1 requête par seconde
+
 class PostAffiliatePro {
   /**
    * Constructor
@@ -86,25 +102,51 @@ class PostAffiliatePro {
 
   async __getAPI(data) {
     if (!this.cookies) await this.__authentication();
-    data.S = this.session;
-    let bodyFormData = new FormData();
-    bodyFormData.append("D", JSON.stringify(data));
-    let response = await axios({
-      method: "POST",
-      url: this.urlServer,
-      data: bodyFormData.getBuffer(),
-      headers: _objectSpread({
-        "Cookie": `A=${this.session}; ${this.cookies}`
-      }, bodyFormData.getHeaders())
+    data.S = this.session; // Générer une clé de cache unique basée sur la requête
+
+    const cacheKey = JSON.stringify(data);
+    const cachedResult = cache.get(cacheKey);
+
+    if (cachedResult) {
+      return cachedResult;
+    } // Ajouter la requête à la file d'attente
+
+
+    return queue.add(async () => {
+      let bodyFormData = new FormData();
+      bodyFormData.append("D", JSON.stringify(data));
+
+      try {
+        const response = await axios({
+          method: "POST",
+          url: this.urlServer,
+          data: bodyFormData.getBuffer(),
+          headers: _objectSpread({
+            "Cookie": `A=${this.session}; ${this.cookies}`
+          }, bodyFormData.getHeaders())
+        });
+
+        if (this.__isSessionClosed(response)) {
+          this.cookies = null;
+          return this.__getAPI(data);
+        } // Mettre en cache le résultat
+
+
+        if (response.data && !response.data.e) {
+          cache.set(cacheKey, response.data);
+        }
+
+        return response.data;
+      } catch (error) {
+        if (error.response && error.response.status === 429) {
+          // En cas d'erreur 429, réessayer après un délai
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          return this.__getAPI(data);
+        }
+
+        throw error;
+      }
     });
-
-    if (this.__isSessionClosed(response)) {
-      this.cookies = null;
-
-      this.__getAPI(data);
-    }
-
-    return response.data;
   }
 
   __isSessionClosed(response) {
@@ -749,7 +791,7 @@ class PostAffiliatePro {
       "M": "getRows",
       "sort_col": "datetime",
       "sort_asc": false,
-      "offset": offset,
+      // "offset": offset,
       "limit": limit,
       "filters": filters,
       "columns": [["id"], ["id"], ["firstname"], ["lastname"], ["userid"], ["userstatus"], ["bannerid"], ["banner"], ["campaignid"], ["campaign"], ["countrycode"], ["rtype"], ["datetime"], ["referrerurl"], ["destinationurl"], ["visitorid"], ["ip"], ["cdata1"], ["cdata2"]]
@@ -832,7 +874,7 @@ class PostAffiliatePro {
       "M": "getRows",
       "sort_col": "dateinserted",
       "sort_asc": false,
-      "offset": offset,
+      // "offset": offset,
       "limit": limit,
       "filters": filters,
       "columns": [["id"], ["id"], ["commission"], ["totalcost"], ["t_orderid"], ["productid"], ["dateinserted"], ["name"], ["rtype"], ["tier"], ["commissionTypeName"], ["rstatus"], ["payoutstatus"], ["firstname"], ["lastname"], ["userid"], ["bannerid"], ["campaignid"], ["banner"], ["name"], ["data1"], ["data2"], ["data3"], ["data4"], ["data5"], ["originalcurrencyid"], ["original_currency_code"], ["originalcurrencyrate"], ["originalcurrencyvalue"], ["firstclickdata1"], ["userstatus"], ["actions"]]
