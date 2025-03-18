@@ -87,7 +87,41 @@ class PostAffiliatePro {
     return true;
   }
 
-  async __getAPI(data, retryCount = 0) {
+  async __getAPI(data) {
+    if (!this.cookies)
+      await this.__authentication();
+
+    data.S = this.session;
+
+    let bodyFormData = new FormData();
+    bodyFormData.append("D", JSON.stringify(data));
+    try {
+
+      let response = await axios({
+        method: "POST",
+        url: this.urlServer,
+        data: bodyFormData.getBuffer(),
+        headers: {
+          "Cookie": `A=${this.session}; ${this.cookies}`,
+          ...bodyFormData.getHeaders()
+        }
+      });
+
+      if (this.__isSessionClosed(response)) {
+        this.cookies = null;
+        this.__getAPI(data);
+      }
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 429) {
+        console.log("--> error 429, we throw an error", error.response.status); // eslint-disable-line
+      }
+      console.log('--> not 429 or retry exceeded', retryCount, error.response.status); // eslint-disable-line
+      return null;
+    }
+  }
+
+  async __getAPIQueued(data, retryCount = 0) {
     if (!this.cookies) {
       await this.__authentication();
     }
@@ -131,7 +165,7 @@ class PostAffiliatePro {
             cache.set(cacheKey, response.data);
           }
         }
-        console.log("--> setting cache and returning response.data", retryCount, response.data.count); // eslint-disable-line
+        console.log("--> setting cache and returning response.data", retryCount, response.data.length); // eslint-disable-line
         return response.data;
       } catch (error) {
         if (error.response && error.response.status === 429) {
