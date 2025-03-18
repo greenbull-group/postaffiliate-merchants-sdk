@@ -923,7 +923,7 @@ class PostAffiliatePro {
       "requests": [requestParams]
     });
     let maxRecords = (clicks && clicks.data) ? clicks.data.length : 0;
-    let totalRecords = clicks.count;
+    let totalRecords = (clicks && clicks.count) ? clicks.count : 0;
     if (limit === 0 && maxRecords > 0) {
       let cycles = Math.ceil(totalRecords / maxRecords);
       for (let i = 1; i < cycles; i++) {
