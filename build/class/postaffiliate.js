@@ -129,7 +129,7 @@ class PostAffiliatePro {
         console.log("--> error 429, we throw an error", error.response.status); // eslint-disable-line
       }
 
-      console.log('--> not 429 or retry exceeded', retryCount, error.response.status); // eslint-disable-line
+      console.log('--> not 429 or retry exceeded', error.response.status); // eslint-disable-line
 
       return null;
     }
