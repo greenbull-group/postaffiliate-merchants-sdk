@@ -102,7 +102,10 @@ class PostAffiliatePro {
   }
 
   async __getAPI(data, retryCount = 0) {
-    if (!this.cookies) await this.__authentication();
+    if (!this.cookies) {
+      await this.__authentication();
+    }
+
     data.S = this.session; // Générer une clé de cache unique basée sur la requête
 
     const cacheKey = JSON.stringify(data);
@@ -151,8 +154,6 @@ class PostAffiliatePro {
           await new Promise(resolve => setTimeout(resolve, 1000));
           return this.__getAPI(data, retryCount + 1);
         }
-
-        throw error;
       }
     });
   }
@@ -1010,7 +1011,7 @@ class PostAffiliatePro {
         "M": "getRows",
         "sort_col": "rorder",
         "sort_asc": true,
-        "offset": offset,
+        // "offset": offset,
         "limit": limit,
         "filters": filters,
         "columns": [["id"], ["id"], ["banner"], ["rtype"], ["isconfirmed"], ["destinationurl"], ["rstatus"], ["categoryid"], ["rorder"], ["description"], ["description"], ["actions"]]
