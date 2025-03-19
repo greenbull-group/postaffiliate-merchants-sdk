@@ -13,23 +13,6 @@ const axios = require("axios").default;
 
 const FormData = require("form-data");
 
-const NodeCache = require("node-cache");
-
-const {
-  default: PQueue
-} = require("p-queue"); // Cache configuration
-
-
-const cache = new NodeCache({
-  stdTTL: 300
-}); // 5 minutes TTL par défaut
-
-const queue = new PQueue({
-  concurrency: 1,
-  interval: 1000,
-  timeout: 20000
-});
-
 class PostAffiliatePro {
   /**
    * Constructor
@@ -136,71 +119,6 @@ class PostAffiliatePro {
 
       return [];
     }
-  }
-
-  async __getAPIQueued(data, retryCount = 0) {
-    if (!this.cookies) {
-      await this.__authentication();
-    }
-
-    data.S = this.session; // Générer une clé de cache unique basée sur la requête
-
-    const cacheKey = this.__generateCacheKey(data);
-
-    const cachedResult = cache.get(cacheKey);
-
-    if (cachedResult) {
-      console.log("--> result is cached", retryCount, cacheKey); // eslint-disable-line
-
-      return cachedResult;
-    }
-
-    console.log("--> no cache, adding to queue", retryCount, cacheKey); // eslint-disable-line
-    // Ajouter la requête à la file d'attente
-
-    return queue.add(async () => {
-      let bodyFormData = new FormData();
-      bodyFormData.append("D", JSON.stringify(data));
-
-      try {
-        const response = await axios({
-          method: "POST",
-          url: this.urlServer,
-          data: bodyFormData.getBuffer(),
-          headers: _objectSpread({
-            "Cookie": `A=${this.session}; ${this.cookies}`
-          }, bodyFormData.getHeaders())
-        });
-
-        if (this.__isSessionClosed(response)) {
-          this.cookies = null;
-          console.log("--> session closed, retrying", retryCount); // eslint-disable-line
-
-          return await this.__getAPI(data, retryCount);
-        } // Mettre en cache le résultat
-
-
-        if (response.data && !response.data.e) {
-          if (response.data.count > 0) {
-            cache.set(cacheKey, response.data);
-          }
-        }
-
-        console.log("--> setting cache and returning response.data", retryCount, response.data.length); // eslint-disable-line
-
-        return response.data;
-      } catch (error) {
-        if (error.response && error.response.status === 429) {
-          console.log("--> error 429, we throw an error", error.response.status); // eslint-disable-line
-
-          throw error;
-        }
-
-        console.log('--> not 429 or retry exceeded', retryCount, error.response.status); // eslint-disable-line
-
-        return null;
-      }
-    });
   }
 
   __generateCacheKey(data) {

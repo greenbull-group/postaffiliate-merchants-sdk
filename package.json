@@ -30,8 +30,6 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "form-data": "^3.0.0",
-    "node-cache": "^5.1.2",
-    "p-queue": "6.6.2"
+    "form-data": "^3.0.0"
   }
 }
