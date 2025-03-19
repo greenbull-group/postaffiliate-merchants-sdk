@@ -101,7 +101,7 @@ class PostAffiliatePro {
     return true;
   }
 
-  async __getAPI(data) {
+  async __getAPI(data, retryCount = 0) {
     if (!this.cookies) await this.__authentication();
     data.S = this.session;
     let bodyFormData = new FormData();
@@ -120,13 +120,16 @@ class PostAffiliatePro {
       if (this.__isSessionClosed(response)) {
         this.cookies = null;
 
-        this.__getAPI(data);
+        this.__getAPI(data, retryCount);
       }
 
       return response.data;
     } catch (error) {
-      if (error.response && error.response.status === 429) {
-        console.log("--> error too many requests", error.response.status); // eslint-disable-line
+      if (error.response && error.response.status === 429 && retryCount < 3) {
+        console.log("--> error too many requests, retrying", error.response.status, retryCount); // eslint-disable-line
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return await this.__getAPI(data, retryCount + 1);
       }
 
       console.log('--> error postaffiliate', error.response.status, error.response.message); // eslint-disable-line
@@ -886,7 +889,7 @@ class PostAffiliatePro {
       "requests": [requestParams]
     });
     let maxRecords = clicks && clicks.data ? clicks.data.length : 0;
-    let totalRecords = clicks.count;
+    let totalRecords = clicks && clicks.count ? clicks.count : 0;
 
     if (limit === 0 && maxRecords > 0) {
       let cycles = Math.ceil(totalRecords / maxRecords);
